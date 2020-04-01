@@ -1,5 +1,6 @@
 package com.sadkoala.stockgate.adapter;
 
+import com.sadkoala.stockgate.ParameterUtils;
 import com.sadkoala.stockgate.communicator.BinanceCommunicator;
 import com.sadkoala.stockgate.parser.BinanceParser;
 import com.sadkoala.stockgate.parser.model.Order;
@@ -14,6 +15,7 @@ public class BinanceAdapter extends AbstractStockAdapter implements IStockAdapte
     }
 
     public static List<Order> getOpenOrders(String symbol) throws Exception {
+        ParameterUtils.checkParamEmpty(symbol, "symbol");
         return BinanceParser.parseOpenOrders(BinanceCommunicator.requestOpenOrders(symbol));
     }
 

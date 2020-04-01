@@ -1,6 +1,7 @@
 package com.sadkoala.stockgate.communicator;
 
 import com.sadkoala.httpscommunicator.HttpsCommunicator;
+import com.sadkoala.stockgate.ParameterUtils;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -58,9 +59,7 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
      *
      */
     public static String requestLatestSymbolPrice(String symbol) throws Exception {
-        if (symbol == null || symbol.isBlank()) {
-            throw new IllegalArgumentException("Parameter symbol is mandatory");
-        }
+        ParameterUtils.checkParamEmpty(symbol, "symbol");
         String urlString = "api.binance.com/api/v3/ticker/price" + "?symbol=" + symbol;
         return HttpsCommunicator.executeHttpsRequest(urlString);
     }

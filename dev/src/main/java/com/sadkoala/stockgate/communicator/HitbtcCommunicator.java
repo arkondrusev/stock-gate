@@ -1,6 +1,7 @@
 package com.sadkoala.stockgate.communicator;
 
 import com.sadkoala.httpscommunicator.HttpsCommunicator;
+import com.sadkoala.stockgate.ParameterUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -52,9 +53,7 @@ public class HitbtcCommunicator {
      * ```
      */
     public static String requestOpenOrders(String symbol) throws Exception {
-        if (symbol == null || symbol.isBlank()) {
-            throw new IllegalArgumentException("Parameter symbol is mandatory");
-        }
+        ParameterUtils.checkParamEmpty(symbol, "symbol");
         Map<String,String> headers = new HashMap<>();
         headers.put("Authorization", AUTH_HEADER_VALUE);
         return HttpsCommunicator.executeHttpsRequest("api.hitbtc.com/api/2/order?symbol=" + symbol, headers);
