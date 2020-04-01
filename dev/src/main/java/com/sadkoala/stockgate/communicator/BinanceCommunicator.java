@@ -1,13 +1,8 @@
 package com.sadkoala.stockgate.communicator;
 
 import com.sadkoala.httpscommunicator.HttpsCommunicator;
-import com.sadkoala.stockgate.ParameterUtils;
+import com.sadkoala.stockgate.GateUtils;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,7 +54,7 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
      *
      */
     public static String requestLatestSymbolPrice(String symbol) throws Exception {
-        ParameterUtils.checkParamEmpty(symbol, "symbol");
+        GateUtils.checkParamEmpty(symbol, "symbol");
         String urlString = "api.binance.com/api/v3/ticker/price" + "?symbol=" + symbol;
         return HttpsCommunicator.executeHttpsRequest(urlString);
     }
@@ -116,35 +111,10 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
             throw new IllegalArgumentException("Parameter symbol is mandatory");
         }
         String urlString = "symbol=" + symbol + "&recvWindow=60000" + "&timestamp=" + getTimestamp();
-        urlString = "api.binance.com/api/v3/openOrders?" + urlString + "&signature=" + getSignature(urlString);
+        urlString = "api.binance.com/api/v3/openOrders?" + urlString + "&signature=" + encodeHmac256(urlString, SECRET_KEY_VALUE);
         Map<String,String> headers = new HashMap<>();
         headers.put("X-MBX-APIKEY", API_KEY_VALUE);
         return HttpsCommunicator.executeHttpsRequest(urlString, headers);
-    }
-
-    private static String getSignature(String message) throws NoSuchAlgorithmException, InvalidKeyException {
-        //log.debug("getSignature. Start...");
-
-        String hmacSha256 = "HmacSHA256";
-        Mac sha256_HMAC = Mac.getInstance(hmacSha256);
-        SecretKeySpec secret_key = new SecretKeySpec(SECRET_KEY_VALUE.getBytes(StandardCharsets.UTF_8), hmacSha256);
-        sha256_HMAC.init(secret_key);
-        String hash = bytesToHex(sha256_HMAC.doFinal(message.getBytes(StandardCharsets.UTF_8)));
-
-        //log.debug("returning value. result=" + hash);
-        //log.debug("getSignature. Finish...");
-        return hash;
-    }
-
-    private static String bytesToHex(byte[] bytes) {
-        char[] hexArray = "0123456789abcdef".toCharArray();
-        char[] hexChars = new char[bytes.length * 2];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
     }
 
     private static long getTimestamp() {
