@@ -10,8 +10,8 @@
 + получение открытых ордеров с hitbtc GET /api/2/order
 + парсинг открытых ордеров с hitbtc
 + получение открытых ордеров с okex
-- парсинг открытых ордеров с okex
-- юнит-тесты
++ парсинг открытых ордеров с okex
++ юнит-тесты
 --- ver_0.0.4 ---
 - парсинг даты-времени с Hitbtc в милисекунды
 - получение цены BTC-USDT с hitbtc
@@ -35,3 +35,6 @@
 
 - параметризация коммуникаторов ключами доступа
 - вынести блоки проверки непустоты параметров в отдельный метод
+
+- переделать в ордере время на Instant. (погуглить как лучше хранить время щас)
+- ERROR StatusLogger Log4j2 could not find a logging implementation. Please add log4j-core to the classpath. Using SimpleLogger to log to the console...
