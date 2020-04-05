@@ -29,17 +29,17 @@ public abstract class AbstractStockCommunicator {
     }
     */
 
-    protected static String encodeHmac256(String message, String key) throws NoSuchAlgorithmException, InvalidKeyException {
+    protected static byte[] encodeHmac256(byte[] message, byte[] key) throws NoSuchAlgorithmException, InvalidKeyException {
         GateUtils.checkParamEmpty(message, "message");
         GateUtils.checkParamEmpty(key, "key");
 
         String hmacSha256_Algo = "HmacSHA256";
         Mac sha256_HMAC = Mac.getInstance(hmacSha256_Algo);
-        sha256_HMAC.init(new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), hmacSha256_Algo));
-        return bytesToHex(sha256_HMAC.doFinal(message.getBytes(StandardCharsets.UTF_8)));
+        sha256_HMAC.init(new SecretKeySpec(key, hmacSha256_Algo));
+        return sha256_HMAC.doFinal(message);
     }
 
-    private static String bytesToHex(byte[] bytes) {
+    protected static char[] bytesToHex(byte[] bytes) {
         char[] hexArray = "0123456789abcdef".toCharArray();
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
@@ -47,11 +47,19 @@ public abstract class AbstractStockCommunicator {
             hexChars[j * 2] = hexArray[v >>> 4];
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
-        return new String(hexChars);
+        return hexChars;
     }
 
-    protected static String encodeBase64(String text) {
-        return new String(Base64.getEncoder().encode(text.getBytes(StandardCharsets.UTF_8)));
+    protected static byte[] encodeBase64(byte[] text) {
+        return Base64.getEncoder().encode(text);
+    }
+
+    protected static String toString(byte[] input) {
+        return new String(input, StandardCharsets.UTF_8);
+    }
+
+    protected static byte[] toByteArr(String input) {
+        return input.getBytes(StandardCharsets.UTF_8);
     }
 
 }

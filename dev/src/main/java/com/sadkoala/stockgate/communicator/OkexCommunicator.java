@@ -3,6 +3,9 @@ package com.sadkoala.stockgate.communicator;
 import com.sadkoala.httpscommunicator.HttpsCommunicator;
 import com.sadkoala.stockgate.GateUtils;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,17 +35,22 @@ public class OkexCommunicator extends AbstractStockCommunicator {
      */
     public static String requestOpenOrders(String symbol) throws Exception {
         GateUtils.checkParamEmpty(symbol, "symbol");
-        String urlString = "instrument_id=" + symbol;
-        urlString = "/orders_pending?" + urlString;
-        String timestamp = GateUtils.millisToISO8601Timestamp(0L);
-        String textToSign = timestamp + "GET" + urlString;
-        urlString = "www.okex.com/api/spot/v3/orders_pending?" + urlString;
+        String requestPath = "/api/spot/v3/orders_pending?instrument_id=" + symbol;
+        String timestamp = Instant.now().toString();
+        String urlString = "www.okex.com" + requestPath;
+
         Map<String,String> headers = new HashMap<>();
+//        headers.put("Content-Type", "application/json; charset=UTF-8");
+//        headers.put("Accept", "application/json");
         headers.put("OK-ACCESS-KEY", API_KEY_VALUE);
-        headers.put("OK-ACCESS-SIGN", encodeHmac256(textToSign, SECRET_KEY_VALUE));
+        headers.put("OK-ACCESS-SIGN", makeSign(timestamp + "GET" + requestPath));
         headers.put("OK-ACCESS-TIMESTAMP", timestamp);
         headers.put("OK-ACCESS-PASSPHRASE", PASSPHRASE_VALUE);
         return HttpsCommunicator.executeHttpsRequest(urlString, headers);
+    }
+
+    private static String makeSign(String textToSign) throws InvalidKeyException, NoSuchAlgorithmException {
+        return toString(encodeBase64(encodeHmac256(toByteArr(textToSign), toByteArr(SECRET_KEY_VALUE))));
     }
 
 }

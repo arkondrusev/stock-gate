@@ -12,7 +12,7 @@ public class HitbtcCommunicator extends AbstractStockCommunicator {
     private static final String SECRET_KEY_VALUE = "be45b2caa23f600bfb0764ac5bd05fa0";
 
     private static final String AUTH_HEADER_VALUE = "Basic "
-            + encodeBase64(PRIVATE_KEY_VALUE + ":" + SECRET_KEY_VALUE);
+            + toString(encodeBase64(toByteArr(PRIVATE_KEY_VALUE + ":" + SECRET_KEY_VALUE)));
 
     /**
      * #### Get Active orders

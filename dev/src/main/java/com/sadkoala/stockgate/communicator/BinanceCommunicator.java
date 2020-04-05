@@ -3,6 +3,8 @@ package com.sadkoala.stockgate.communicator;
 import com.sadkoala.httpscommunicator.HttpsCommunicator;
 import com.sadkoala.stockgate.GateUtils;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -105,13 +107,12 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
      * ]
      * ```
      */
-
     public static String requestOpenOrders(String symbol) throws Exception {
         if (symbol == null || symbol.isBlank()) {
             throw new IllegalArgumentException("Parameter symbol is mandatory");
         }
-        String urlString = "symbol=" + symbol + "&recvWindow=60000" + "&timestamp=" + getTimestamp();
-        urlString = "api.binance.com/api/v3/openOrders?" + urlString + "&signature=" + encodeHmac256(urlString, SECRET_KEY_VALUE);
+        String requestParams = "symbol=" + symbol + "&recvWindow=60000" + "&timestamp=" + getTimestamp();
+        String urlString = "api.binance.com/api/v3/openOrders?" + requestParams + "&signature=" + makeSignature(requestParams);
         Map<String,String> headers = new HashMap<>();
         headers.put("X-MBX-APIKEY", API_KEY_VALUE);
         return HttpsCommunicator.executeHttpsRequest(urlString, headers);
@@ -119,6 +120,10 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
 
     private static long getTimestamp() {
         return System.currentTimeMillis();
+    }
+
+    private static String makeSignature(String text) throws InvalidKeyException, NoSuchAlgorithmException {
+        return new String(bytesToHex(encodeHmac256(toByteArr(text), toByteArr(SECRET_KEY_VALUE))));
     }
 
 }

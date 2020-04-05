@@ -8,12 +8,10 @@ public class GateUtils {
         }
     }
 
-    public static String millisToISO8601Timestamp(Long timeMillis) {
-        return null;
-    }
-
-    public static Long iso8601TimestampToMillis(String timestamp) {
-        return null;
+    public static void checkParamEmpty(byte[] param, String paramName) {
+        if (param == null || param.length == 0) {
+            throw new IllegalArgumentException("Parameter \"" + paramName + "\" is empty");
+        }
     }
 
 }
