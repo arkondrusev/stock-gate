@@ -15,7 +15,7 @@ public class BinanceAdapter extends AbstractStockAdapter {
     }
 
     public static List<Order> getOpenOrders(String symbol) throws Exception {
-        GateUtils.checkParamEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
         return BinanceParser.parseOpenOrders(BinanceCommunicator.requestOpenOrders(symbol));
     }
 

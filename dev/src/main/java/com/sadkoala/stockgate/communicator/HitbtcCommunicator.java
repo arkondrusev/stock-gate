@@ -50,7 +50,7 @@ public class HitbtcCommunicator extends AbstractStockCommunicator {
      * ```
      */
     public static String requestOpenOrders(String symbol) throws Exception {
-        GateUtils.checkParamEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
         Map<String,String> headers = new HashMap<>();
         headers.put("Authorization", AUTH_HEADER_VALUE);
         return HttpsCommunicator.executeHttpsRequest("api.hitbtc.com/api/2/order?symbol=" + symbol, headers);

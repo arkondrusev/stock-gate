@@ -10,7 +10,7 @@ import java.util.List;
 public class HitbtcAdapter extends AbstractStockAdapter {
 
     public static List<Order> getOpenOrders(String symbol) throws Exception {
-        GateUtils.checkParamEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
         return HitbtcParser.parseOpenOrders(HitbtcCommunicator.requestOpenOrders(symbol));
     }
 

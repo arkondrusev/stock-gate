@@ -34,7 +34,7 @@ public class OkexCommunicator extends AbstractStockCommunicator {
      * limit	String	No	Number of results per request. The maximum is 100; the default is 100
      */
     public static String requestOpenOrders(String symbol) throws Exception {
-        GateUtils.checkParamEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
         String requestPath = "/api/spot/v3/orders_pending?instrument_id=" + symbol;
         String timestamp = getUnixTime();
         String urlString = "www.okex.com" + requestPath;

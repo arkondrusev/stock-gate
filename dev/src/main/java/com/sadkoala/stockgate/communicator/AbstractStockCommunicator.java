@@ -30,8 +30,8 @@ public abstract class AbstractStockCommunicator {
     */
 
     protected static byte[] encodeHmac256(byte[] message, byte[] key) throws NoSuchAlgorithmException, InvalidKeyException {
-        GateUtils.checkParamEmpty(message, "message");
-        GateUtils.checkParamEmpty(key, "key");
+        GateUtils.checkParamNotEmpty(message, "message");
+        GateUtils.checkParamNotEmpty(key, "key");
 
         String hmacSha256_Algo = "HmacSHA256";
         Mac sha256_HMAC = Mac.getInstance(hmacSha256_Algo);
