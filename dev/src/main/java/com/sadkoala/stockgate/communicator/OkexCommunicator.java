@@ -36,7 +36,7 @@ public class OkexCommunicator extends AbstractStockCommunicator {
     public static String requestOpenOrders(String symbol) throws Exception {
         GateUtils.checkParamEmpty(symbol, "symbol");
         String requestPath = "/api/spot/v3/orders_pending?instrument_id=" + symbol;
-        String timestamp = Instant.now().toString();
+        String timestamp = getUnixTime();
         String urlString = "www.okex.com" + requestPath;
 
         Map<String,String> headers = new HashMap<>();
@@ -51,6 +51,15 @@ public class OkexCommunicator extends AbstractStockCommunicator {
 
     private static String makeSign(String textToSign) throws InvalidKeyException, NoSuchAlgorithmException {
         return toString(encodeBase64(encodeHmac256(toByteArr(textToSign), toByteArr(SECRET_KEY_VALUE))));
+    }
+
+    /**
+     * UNIX timestamp ISO 8601 rule eg: 2018-02-03T05:34:14.110Z
+     */
+    private static String getUnixTime() {
+        StringBuilder nowStr = new StringBuilder(Instant.now().toString());
+        // Instant.toString в windows и linux могут давать разные результаты, поэтому приводим к нужному нам текстовому формату принудительно
+        return new StringBuilder().append(nowStr.substring(0,nowStr.lastIndexOf("."))).append(nowStr.substring(nowStr.lastIndexOf(".")).substring(0,4)).append(nowStr.substring(nowStr.length()-1)).toString();
     }
 
 }
