@@ -20,4 +20,10 @@ public class BinanceAdapterTest {
         System.out.println("open orders count = " + orders.size());
     }
 
+    @Test
+    public void testGetAssetBalance() throws Exception {
+        BigDecimal balance = BinanceAdapter.getAssetBalanceFree("USDT");
+        System.out.println("balance = " + balance.toPlainString());
+    }
+
 }

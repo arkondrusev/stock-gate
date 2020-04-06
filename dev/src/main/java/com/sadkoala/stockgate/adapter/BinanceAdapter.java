@@ -16,7 +16,14 @@ public class BinanceAdapter extends AbstractStockAdapter {
 
     public static List<Order> getOpenOrders(String symbol) throws Exception {
         GateUtils.checkParamNotEmpty(symbol, "symbol");
+
         return BinanceParser.parseOpenOrders(BinanceCommunicator.requestOpenOrders(symbol));
+    }
+
+    public static BigDecimal getAssetBalanceFree(String asset) throws Exception {
+        GateUtils.checkParamNotEmpty(asset, "asset");
+
+        return BinanceParser.parseAssetBalanceFree(BinanceCommunicator.requestAccountInfo(), asset);
     }
 
 }
