@@ -164,7 +164,75 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
         return requestWithAuthorization("/api/v3/account", prepareCommonParams());
     }
 
-    public static String prepareCommonParams() {
+    /**
+     * ## Market Data endpoints
+     * ### Order book
+     * ```
+     * GET /api/v3/depth
+     * ```
+     *
+     * **Weight:**
+     * Adjusted based on the limit:
+     *
+     *
+     * Limit | Weight
+     * ------------ | ------------
+     * 5, 10, 20, 50, 100 | 1
+     * 500 | 5
+     * 1000 | 10
+     * 5000| 50
+     *
+     *
+     * **Parameters:**
+     *
+     * Name | Type | Mandatory | Description
+     * ------------ | ------------ | ------------ | ------------
+     * symbol | STRING | YES |
+     * limit | INT | NO | Default 100; max 5000. Valid limits:[5, 10, 20, 50, 100, 500, 1000, 5000]
+     *
+     * **Response:**
+     * ```javascript
+     * {
+     *   "lastUpdateId": 1027024,
+     *   "bids": [
+     *     [
+     *       "4.00000000",     // PRICE
+     *       "431.00000000"    // QTY
+     *     ]
+     *   ],
+     *   "asks": [
+     *     [
+     *       "4.00000200",
+     *       "12.00000000"
+     *     ]
+     *   ]
+     * }
+     * ```
+     */
+    public static String requestOrderBook(final String symbol, final int limit) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        if (limit != 0) {
+            checkParamLimitValid(limit);
+        }
+
+        String urlString = HOST + "/api/v3/depth" + "?" + "symbol=" + symbol;
+        if (limit != 0) {
+            urlString = urlString + "&limit=" + limit;
+        }
+        return HttpsCommunicator.executeHttpsRequest(urlString);
+    }
+
+    private static void checkParamLimitValid(int limit) {
+        return;
+    }
+
+    public static String requestOrderBook(String symbol) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+
+        return requestOrderBook(symbol, 0);
+    }
+
+    private static String prepareCommonParams() {
         return "recvWindow=60000&timestamp=" + getTimestamp();
     }
 
