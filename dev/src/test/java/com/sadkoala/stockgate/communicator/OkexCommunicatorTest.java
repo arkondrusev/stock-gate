@@ -10,4 +10,10 @@ public class OkexCommunicatorTest {
         System.out.println(orders);
     }
 
+    @Test
+    public void testRequestBalances() throws Exception {
+        String balances = OkexCommunicator.requestBalances();
+        System.out.println(balances);
+    }
+
 }

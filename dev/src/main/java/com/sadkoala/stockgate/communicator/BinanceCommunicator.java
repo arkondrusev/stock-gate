@@ -179,6 +179,12 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
         return HttpsCommunicator.executeHttpsRequest(urlString, headers);
     }
 
+    private static String requestWithAuthorization(String endpoint) throws Exception {
+        GateUtils.checkParamNotEmpty(endpoint, "endpoint");
+
+        return requestWithAuthorization(endpoint, EMPTY_STRING);
+    }
+
     private static long getTimestamp() {
         return System.currentTimeMillis();
     }

@@ -87,7 +87,7 @@ public class HitbtcCommunicator extends AbstractStockCommunicator {
      * ```
      */
     public static String requestTradingBalance() throws Exception {
-        return requestWithAuthorization("/api/2/trading/balance", EMPTY_STRING);
+        return requestWithAuthorization("/api/2/trading/balance");
     }
 
     private static String requestWithAuthorization(final String endpoint, final String requestParams) throws Exception {
@@ -102,6 +102,12 @@ public class HitbtcCommunicator extends AbstractStockCommunicator {
         Map<String,String> headers = new HashMap<>();
         headers.put("Authorization", AUTH_HEADER_VALUE);
         return HttpsCommunicator.executeHttpsRequest(urlString.toString(), headers);
+    }
+
+    private static String requestWithAuthorization(final String endpoint) throws Exception {
+        GateUtils.checkParamNotEmpty(endpoint, "endpoint");
+
+        return requestWithAuthorization(endpoint, EMPTY_STRING);
     }
 
 }

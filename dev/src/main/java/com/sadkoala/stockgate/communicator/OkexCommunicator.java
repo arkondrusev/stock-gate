@@ -15,6 +15,8 @@ public class OkexCommunicator extends AbstractStockCommunicator {
     private static final String API_KEY_VALUE = "c6626a6c-2379-4578-a106-7a16486600b4";
     private static final String PASSPHRASE_VALUE = "HoggyLezzy";
 
+    private static final String HOST = "www.okex.com";
+
     /**
      * Open Orders
      * This retrieves the list of your current open orders. Pagination is supported and the response is sorted with most recent first in reverse chronological order.
@@ -35,10 +37,44 @@ public class OkexCommunicator extends AbstractStockCommunicator {
      */
     public static String requestOpenOrders(String symbol) throws Exception {
         GateUtils.checkParamNotEmpty(symbol, "symbol");
-        String requestPath = "/api/spot/v3/orders_pending?instrument_id=" + symbol;
-        String timestamp = getUnixTime();
-        String urlString = "www.okex.com" + requestPath;
 
+        return requestWithAuthorization("/api/spot/v3/orders_pending", "instrument_id=" + symbol);
+    }
+
+    /**
+     * Account Information
+     * This retrieves the list of assets, (with non-zero balance), remaining balance, and amount available in the spot trading account.
+     *
+     * Rate limit: 20 requests per 2 seconds
+     * HTTP Requests
+     * GET/api/spot/v3/accounts
+     *
+     * Example Request
+     * GET/api/spot/v3/accounts
+     *
+     * Return Parameters
+     * Parameters	Parameters Types	Description
+     * currency	String	Token symbol
+     * balance	String	Remaining balance
+     * id	String	Account ID
+     * hold	String	Amount on hold (not available)
+     * available	String	Available amount
+     * Notes
+     * After placing an order, the order amount will be put on hold. After you placed an order, the amount of the order will be put on hold. You will not be able to transfer or use in other orders until the order is completed or cancelled.
+     */
+    public static String requestBalances() throws Exception {
+        return requestWithAuthorization("/api/spot/v3/accounts");
+    }
+
+    private static String requestWithAuthorization(final String endpoint, final String params) throws Exception {
+        GateUtils.checkParamNotEmpty(endpoint, "endpoint");
+        GateUtils.checkParamNotNull(params, "params");
+
+        String requestPath = endpoint;
+        if (!params.isBlank()) {
+            requestPath = requestPath + "?" + params;
+        }
+        String timestamp = getUnixTime();
         Map<String,String> headers = new HashMap<>();
 //        headers.put("Content-Type", "application/json; charset=UTF-8");
 //        headers.put("Accept", "application/json");
@@ -46,7 +82,13 @@ public class OkexCommunicator extends AbstractStockCommunicator {
         headers.put("OK-ACCESS-SIGN", makeSign(timestamp + "GET" + requestPath));
         headers.put("OK-ACCESS-TIMESTAMP", timestamp);
         headers.put("OK-ACCESS-PASSPHRASE", PASSPHRASE_VALUE);
-        return HttpsCommunicator.executeHttpsRequest(urlString, headers);
+        return HttpsCommunicator.executeHttpsRequest(HOST + requestPath, headers);
+    }
+
+    private static String requestWithAuthorization(final String endpoint) throws Exception {
+        GateUtils.checkParamNotEmpty(endpoint, "endpoint");
+
+        return requestWithAuthorization(endpoint, EMPTY_STRING);
     }
 
     private static String makeSign(String textToSign) throws InvalidKeyException, NoSuchAlgorithmException {
@@ -57,9 +99,12 @@ public class OkexCommunicator extends AbstractStockCommunicator {
      * UNIX timestamp ISO 8601 rule eg: 2018-02-03T05:34:14.110Z
      */
     private static String getUnixTime() {
-        StringBuilder nowStr = new StringBuilder(Instant.now().toString());
-        // Instant.toString в windows и linux могут давать разные результаты, поэтому приводим к нужному нам текстовому формату принудительно
-        return new StringBuilder().append(nowStr.substring(0,nowStr.lastIndexOf("."))).append(nowStr.substring(nowStr.lastIndexOf(".")).substring(0,4)).append(nowStr.substring(nowStr.length()-1)).toString();
+        String now = Instant.now().toString();
+        // Instant.now().toString() в windows и linux могут давать разные результаты, поэтому приводим к нужному нам текстовому формату принудительно
+        int dotIndex = now.lastIndexOf(".");
+        return now.substring(0, dotIndex)
+                + now.substring(dotIndex).substring(0,4)
+                + now.substring(now.length()-1);
     }
 
 }
