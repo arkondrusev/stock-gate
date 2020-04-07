@@ -1,8 +1,6 @@
 package com.sadkoala.stockgate.communicator;
 
 import com.sadkoala.stockgate.GateUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -12,8 +10,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 public abstract class AbstractStockCommunicator {
-
-    private final Logger log = LogManager.getLogger(AbstractStockCommunicator.class.getName());
 
     protected static final String EMPTY_STRING = "";
 
