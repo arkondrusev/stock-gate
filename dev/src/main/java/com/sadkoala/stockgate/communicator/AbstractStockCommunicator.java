@@ -15,6 +15,8 @@ public abstract class AbstractStockCommunicator {
 
     private final Logger log = LogManager.getLogger(AbstractStockCommunicator.class.getName());
 
+    protected static final String EMPTY_STRING = "";
+
     /*
     public static IStockCommunicator createCommunicator(String stockShortName) {
         if (STOCK_BINANCE_MARKER.equals(stockShortName)) {

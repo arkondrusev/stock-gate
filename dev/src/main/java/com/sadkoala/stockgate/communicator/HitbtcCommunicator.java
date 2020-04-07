@@ -11,6 +11,8 @@ public class HitbtcCommunicator extends AbstractStockCommunicator {
     private static final String PRIVATE_KEY_VALUE = "38ae01062504c26ce0e3a295f25eb628";
     private static final String SECRET_KEY_VALUE = "be45b2caa23f600bfb0764ac5bd05fa0";
 
+    private static final String HOST = "api.hitbtc.com";
+
     private static final String AUTH_HEADER_VALUE = "Basic "
             + toString(encodeBase64(toByteArr(PRIVATE_KEY_VALUE + ":" + SECRET_KEY_VALUE)));
 
@@ -51,9 +53,55 @@ public class HitbtcCommunicator extends AbstractStockCommunicator {
      */
     public static String requestOpenOrders(String symbol) throws Exception {
         GateUtils.checkParamNotEmpty(symbol, "symbol");
+
+        return requestWithAuthorization("/api/2/order", "symbol=" + symbol);
+    }
+
+    /**
+     * ### Trading Balance
+     *
+     * `GET /api/2/trading/balance`
+     *
+     * Responses:
+     *
+     * | Name | Type | Description |
+     * |:---|:---:|:---|
+     * | currency | String |  |
+     * | available | Number | Amount available for trading or transfer to main account |
+     * | reserved | Number | Amount reserved for active orders or incomplete transfers to main account |
+     *
+     * Example response:
+     * ```json
+     *     [
+     *       {
+     *         "currency": "ETH",
+     *         "available": "10.000000000",
+     *         "reserved": "0.560000000"
+     *       },
+     *       {
+     *         "currency": "BTC",
+     *         "available": "0.010205869",
+     *         "reserved": "0"
+     *       }
+     *     ]
+     * ```
+     */
+    public static String requestTradingBalance() throws Exception {
+        return requestWithAuthorization("/api/2/trading/balance", EMPTY_STRING);
+    }
+
+    private static String requestWithAuthorization(final String endpoint, final String requestParams) throws Exception {
+        GateUtils.checkParamNotEmpty(endpoint, "endpoint");
+        GateUtils.checkParamNotNull(requestParams, "requestParams");
+
+        StringBuilder urlString = new StringBuilder(HOST);
+        urlString.append(endpoint);
+        if (!requestParams.isEmpty()) {
+            urlString.append("?").append(requestParams);
+        }
         Map<String,String> headers = new HashMap<>();
         headers.put("Authorization", AUTH_HEADER_VALUE);
-        return HttpsCommunicator.executeHttpsRequest("api.hitbtc.com/api/2/order?symbol=" + symbol, headers);
+        return HttpsCommunicator.executeHttpsRequest(urlString.toString(), headers);
     }
 
 }

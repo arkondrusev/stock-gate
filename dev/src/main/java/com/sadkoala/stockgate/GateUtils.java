@@ -14,4 +14,10 @@ public class GateUtils {
         }
     }
 
+    public static void checkParamNotNull(Object param, String paramName) {
+        if (param == null) {
+            throw new NullPointerException("Parameter \"" + paramName + "\" is null");
+        }
+    }
+
 }

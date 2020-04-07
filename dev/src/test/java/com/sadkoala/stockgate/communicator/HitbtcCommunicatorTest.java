@@ -10,4 +10,10 @@ public class HitbtcCommunicatorTest {
         System.out.println(response);
     }
 
+    @Test
+    public void testRequestTradingBalance() throws Exception {
+        String response = HitbtcCommunicator.requestTradingBalance();
+        System.out.println(response);
+    }
+
 }
