@@ -1,6 +1,7 @@
 package com.sadkoala.stockgate.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.sadkoala.stockgate.GateUtils;
 import com.sadkoala.stockgate.parser.model.Order;
 
 import java.io.IOException;
@@ -25,6 +26,21 @@ public class OkexParser extends AbstractStockParser {
                     null));
         }
         return parsedOrders;
+    }
+
+    /**
+     * [{"frozen":"0.01764952","hold":"0.01764952","id":"","currency":"BTC","balance":"0.01764952","available":"0","holds":"0.01764952"},{"frozen":"0.252976","hold":"0.252976","id":"","currency":"LTC","balance":"0.25297695","available":"0.00000095","holds":"0.252976"},{"frozen":"0.069773","hold":"0.069773","id":"","currency":"ETH","balance":"0.06977318","available":"0.00000018","holds":"0.069773"},{"frozen":"0.23167","hold":"0.23167","id":"","currency":"XMR","balance":"0.23167008","available":"0.00000008","holds":"0.23167"},{"frozen":"0","hold":"0","id":"","currency":"USDT","balance":"142.63933592","available":"142.63933592","holds":"0"}]
+     */
+    public static BigDecimal parseBalanceAvailable(final String jsonString, final String currency) throws IOException {
+        GateUtils.checkParamNotEmpty(currency, "currency");
+
+        for (JsonNode balanceNode : mapper.readTree(jsonString)) {
+            if (currency.equals(balanceNode.get("currency").asText())) {
+                return new BigDecimal(balanceNode.get("available").asText());
+            }
+        }
+
+        return null;
     }
 
 }
