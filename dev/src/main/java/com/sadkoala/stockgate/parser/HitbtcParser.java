@@ -3,11 +3,13 @@ package com.sadkoala.stockgate.parser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sadkoala.stockgate.GateUtils;
 import com.sadkoala.stockgate.parser.model.Order;
+import com.sadkoala.stockgate.parser.model.OrderBookEntry;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class HitbtcParser extends AbstractStockParser {
 
@@ -44,6 +46,36 @@ public class HitbtcParser extends AbstractStockParser {
             }
         }
         return null;
+    }
+
+    /**
+     * {"BTCUSD":{"symbol":"BTCUSD","ask":[{"price":"6882.82","size":"0.20000"},{"price":"6882.83","size":"0.12978"},{"price":"6882.84","size":"0.20000"},{"price":"6882.85","size":"0.20000"},{"price":"6882.86","size":"4.00000"}],"bid":[{"price":"6880.56","size":"0.06200"},{"price":"6878.23","size":"0.06671"},{"price":"6878.22","size":"0.13103"},{"price":"6878.21","size":"0.30400"},{"price":"6878.05","size":"4.00000"}],"timestamp":"2020-04-10T13:51:26.236Z"}}
+     */
+    private static List<OrderBookEntry> parseOrderBookByBookType(String jsonString, String symbol, String bookType, int limit) throws IOException {
+        JsonNode root = mapper.readTree(jsonString);
+        JsonNode symbolNode = root.get(symbol);
+        List<OrderBookEntry> entryList = new ArrayList<>(limit);
+        if (Objects.nonNull(symbolNode)) {
+            int i = 0;
+            for (JsonNode entry : symbolNode.get(bookType)) {
+                i++;
+                entryList.add(new OrderBookEntry(
+                        new BigDecimal(entry.get("price").asText()), new BigDecimal(entry.get("size").asText())));
+                if (i == limit) {
+                    break;
+                }
+            }
+        }
+
+        return entryList;
+    }
+
+    public static List<OrderBookEntry> parseOrderBookAsks(String jsonString, String symbol, int limit) throws IOException {
+        return parseOrderBookByBookType(jsonString, symbol, "ask", limit);
+    }
+
+    public static List<OrderBookEntry> parseOrderBookBids(String jsonString, String symbol, int limit) throws IOException {
+        return parseOrderBookByBookType(jsonString, symbol, "bid", limit);
     }
 
 }

@@ -8,10 +8,53 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.Objects;
 
 public abstract class AbstractStockCommunicator {
 
     protected static final String EMPTY_STRING = "";
+
+    protected static class URLParamsBuilder {
+
+        private StringBuilder params = new StringBuilder();
+
+        private void addParam(String paramName, String paramValue) {
+            GateUtils.checkParamNotEmpty(paramName, "paramName");
+            GateUtils.checkParamNotEmpty(paramValue, "paramValue");
+
+            if (params.length() > 0) {
+                params.append("&");
+            }
+            params.append(paramName).append("=").append(paramValue);
+        }
+
+        public void addParamIfNotEmpty(String paramName, String paramValue) {
+            GateUtils.checkParamNotEmpty(paramName, "paramName");
+
+            if (!GateUtils.isParamEmpty(paramValue)) {
+                addParam(paramName, paramValue);
+            }
+        }
+
+        public void addParamIfNotEmpty(String paramName, Integer paramValue) {
+            GateUtils.checkParamNotEmpty(paramName, "paramName");
+
+            if (Objects.nonNull(paramValue)) {
+                addParam(paramName, paramValue.toString());
+            }
+        }
+
+        public void addParamIfNotEmtpy(String paramName, String paramValue, String defaultValue) {
+            GateUtils.checkParamNotEmpty(paramName, "paramName");
+
+            addParamIfNotEmpty(paramName, Objects.requireNonNullElse(paramValue, defaultValue));
+        }
+
+        public String build() {
+            return params.toString();
+        }
+
+    }
 
     /*
     public static IStockCommunicator createCommunicator(String stockShortName) {
@@ -26,6 +69,18 @@ public abstract class AbstractStockCommunicator {
         }
     }
     */
+
+    protected static String buildRequestUrl(String host, String endpoint, String params) {
+        GateUtils.checkParamNotEmpty(host, "host");
+        GateUtils.checkParamNotEmpty(endpoint, "endpoint");
+
+        StringBuilder sb = new StringBuilder(host).append(endpoint);
+        if (!GateUtils.isParamEmpty(params)) {
+            sb.append("?").append(params);
+        }
+
+        return sb.toString();
+    }
 
     protected static byte[] encodeHmac256(byte[] message, byte[] key) throws NoSuchAlgorithmException, InvalidKeyException {
         GateUtils.checkParamNotEmpty(message, "message");

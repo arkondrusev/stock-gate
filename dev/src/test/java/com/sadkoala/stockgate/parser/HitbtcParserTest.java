@@ -24,4 +24,10 @@ public class HitbtcParserTest {
         System.out.println("balance = " + balance.toPlainString());
     }
 
+    @Test
+    public void testParseOrderbook_OneSymbol() throws Exception {
+        String jsonResponse = "{\"BTCUSD\":{\"symbol\":\"BTCUSD\",\"ask\":[{\"price\":\"6882.82\",\"size\":\"0.20000\"},{\"price\":\"6882.83\",\"size\":\"0.12978\"},{\"price\":\"6882.84\",\"size\":\"0.20000\"},{\"price\":\"6882.85\",\"size\":\"0.20000\"},{\"price\":\"6882.86\",\"size\":\"4.00000\"}],\"bid\":[{\"price\":\"6880.56\",\"size\":\"0.06200\"},{\"price\":\"6878.23\",\"size\":\"0.06671\"},{\"price\":\"6878.22\",\"size\":\"0.13103\"},{\"price\":\"6878.21\",\"size\":\"0.30400\"},{\"price\":\"6878.05\",\"size\":\"4.00000\"}],\"timestamp\":\"2020-04-10T13:51:26.236Z\"}}\n";
+        System.out.println("order book size = " + HitbtcParser.parseOrderBookAsks(jsonResponse, "BTCUSD",  1).size());
+    }
+
 }

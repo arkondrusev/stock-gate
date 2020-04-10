@@ -121,8 +121,11 @@ public class HitbtcCommunicator extends AbstractStockCommunicator {
      * ```
      */
     public static String requestOrderbook(List<String> symbols, int limit) throws Exception {
-        StringBuilder urlString = new StringBuilder(HOST);
-        urlString.append("/api/2/public/orderbook");
+        GateUtils.checkParamNotEmpty(symbols, "symbols");
+        if (limit < 0) {
+            throw new IllegalArgumentException("Limit < 0");
+        }
+
         StringBuilder symbolsList = new StringBuilder();
         int i = 0;
         for (String symbol : symbols) {
@@ -131,14 +134,11 @@ public class HitbtcCommunicator extends AbstractStockCommunicator {
                 symbolsList.append(",");
             }
         }
-        String symbolsParam = symbolsList.toString();
-        if (!symbolsParam.isBlank()) {
-            urlString.append("?").append("symbols=").append(symbolsList);
-        }
-        if (limit >=0) {
-            urlString.append("&").append("limit=").append(limit);
-        }
-        return HttpsCommunicator.executeHttpsRequest(urlString.toString());
+
+        URLParamsBuilder urlBuilder = new URLParamsBuilder();
+        urlBuilder.addParamIfNotEmpty("symbols", symbolsList.toString());
+        urlBuilder.addParamIfNotEmpty("limit", limit);
+        return HttpsCommunicator.executeHttpsRequest(buildRequestUrl(HOST, "/api/2/public/orderbook", urlBuilder.build()));
     }
 
     public static String requestOrderbook(String symbol, int limit) throws Exception {

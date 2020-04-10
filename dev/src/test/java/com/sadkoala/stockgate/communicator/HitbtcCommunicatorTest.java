@@ -24,5 +24,4 @@ public class HitbtcCommunicatorTest {
         System.out.println(response);
     }
 
-
 }
