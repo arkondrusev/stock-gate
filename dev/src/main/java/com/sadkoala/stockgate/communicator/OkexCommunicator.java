@@ -66,6 +66,44 @@ public class OkexCommunicator extends AbstractStockCommunicator {
         return requestWithAuthorization("/api/spot/v3/accounts");
     }
 
+    /**
+     * Public - Order Book
+     * Retrieve a trading pair's order book. Pagination is not supported here; the entire orderbook will be returned per request. This is publicly accessible without account authentication. WebSocket is recommended here.
+     *
+     * Rate limit: 20 requests per 2 seconds
+     * HTTP Request
+     * GET/api/spot/v3/instruments/<instrument_id>/book
+     *
+     * Example Request
+     * GET/api/spot/v3/instruments/BTC-USDT/book?size=5&depth=0.2
+     *
+     * Parameters
+     * Parameter	Type	Required	Description
+     * size	String	No	Number of results per request. Maximum 200
+     * depth	String	No	Aggregation of the order book. e.g . 0.1, 0.001
+     * instrument_id	String	No	Trading pair symbol
+     * Response
+     * Parameter	Type	Description
+     * asks	List<String>	Sell side depth
+     * bids	List<String>	Buy side depth
+     * timestamp	String	timestamp
+     * Notes
+     * Aggregation of the order book means that orders within a certain price range is combined and considered as one order cluster.
+     *
+     * When size is not passed in the parameters, one entry is returned; when size is 0, no entry is returned. The maximum size is 200. When requesting more than 200 entries, at most 200 entries are returned.
+     */
+    public static String requestOrderbook(final String symbol, final Short limit, final Float depth) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+
+        return HttpsCommunicator.executeHttpsRequest(
+                buildRequestUrl(HOST,
+                        "/api/spot/v3/instruments/{symbol}/book".replace("{symbol}", symbol),
+                        URLParamsBuilder.newBuilder()
+                                .addParamIfNotEmpty("size", limit)
+                                .addParamIfNotEmpty("depth", depth)
+                                .build()));
+    }
+
     private static String requestWithAuthorization(final String endpoint, final String params) throws Exception {
         GateUtils.checkParamNotEmpty(endpoint, "endpoint");
         GateUtils.checkParamNotNull(params, "params");

@@ -18,6 +18,10 @@ public abstract class AbstractStockCommunicator {
 
         private StringBuilder params = new StringBuilder();
 
+        public static URLParamsBuilder newBuilder() {
+            return new URLParamsBuilder();
+        }
+
         private void addParam(String paramName, String paramValue) {
             GateUtils.checkParamNotEmpty(paramName, "paramName");
             GateUtils.checkParamNotEmpty(paramValue, "paramValue");
@@ -28,26 +32,46 @@ public abstract class AbstractStockCommunicator {
             params.append(paramName).append("=").append(paramValue);
         }
 
-        public void addParamIfNotEmpty(String paramName, String paramValue) {
+        public URLParamsBuilder addParamIfNotEmpty(String paramName, String paramValue) {
             GateUtils.checkParamNotEmpty(paramName, "paramName");
 
             if (!GateUtils.isParamEmpty(paramValue)) {
                 addParam(paramName, paramValue);
             }
+
+            return this;
         }
 
-        public void addParamIfNotEmpty(String paramName, Integer paramValue) {
-            GateUtils.checkParamNotEmpty(paramName, "paramName");
-
+        public URLParamsBuilder addParamIfNotEmpty(String paramName, Integer paramValue) {
             if (Objects.nonNull(paramValue)) {
-                addParam(paramName, paramValue.toString());
+                addParamIfNotEmpty(paramName, String.valueOf(paramValue));
             }
+
+            return this;
         }
 
-        public void addParamIfNotEmtpy(String paramName, String paramValue, String defaultValue) {
+        public URLParamsBuilder addParamIfNotEmpty(String paramName, Float paramValue) {
+            if (Objects.nonNull(paramValue)) {
+                addParamIfNotEmpty(paramName, String.valueOf(paramValue));
+            }
+
+            return this;
+        }
+
+        public URLParamsBuilder addParamIfNotEmpty(String paramName, Short paramValue) {
+            if (Objects.nonNull(paramValue)) {
+                addParamIfNotEmpty(paramName, String.valueOf(paramValue));
+            }
+
+            return this;
+        }
+
+        public URLParamsBuilder addParamIfNotEmtpy(String paramName, String paramValue, String defaultValue) {
             GateUtils.checkParamNotEmpty(paramName, "paramName");
 
             addParamIfNotEmpty(paramName, Objects.requireNonNullElse(paramValue, defaultValue));
+
+            return this;
         }
 
         public String build() {
