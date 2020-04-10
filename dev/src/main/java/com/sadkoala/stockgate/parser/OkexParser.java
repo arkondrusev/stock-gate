@@ -3,6 +3,7 @@ package com.sadkoala.stockgate.parser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sadkoala.stockgate.GateUtils;
 import com.sadkoala.stockgate.parser.model.Order;
+import com.sadkoala.stockgate.parser.model.OrderBookEntry;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -41,6 +42,32 @@ public class OkexParser extends AbstractStockParser {
         }
 
         return null;
+    }
+
+    /**
+     * {"asks":[["6924","0.00752523","4"],["6924.3","0.01","1"],["6924.4","0.001","1"]],"bids":[["6923.9","1.03182977","11"],["6923.5","0.001","1"],["6923.4","0.006","1"]],"timestamp":"2020-04-10T19:19:03.844Z"}
+     */
+    private static List<OrderBookEntry> parseOrderbook(String jsonString, String bookType, int limit) throws IOException {
+        List<OrderBookEntry> entryList = new ArrayList<>(limit);
+        int i = 0;
+        for (JsonNode entry : mapper.readTree(jsonString).get(bookType)) {
+            i++;
+            entryList.add(new OrderBookEntry(
+                    new BigDecimal(entry.get(0).asText()), new BigDecimal(entry.get(1).asText())));
+            if (i == limit) {
+                break;
+            }
+        }
+
+        return entryList;
+    }
+
+    public static List<OrderBookEntry> parseOrderbookAsks(String jsonString, int limit) throws IOException {
+        return parseOrderbook(jsonString,"asks", limit);
+    }
+
+    public static List<OrderBookEntry> parseOrderbookBids(String jsonString, int limit) throws IOException {
+        return parseOrderbook(jsonString,"bids", limit);
     }
 
 }
