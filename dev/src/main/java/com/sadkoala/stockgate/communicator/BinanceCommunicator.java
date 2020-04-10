@@ -209,7 +209,7 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
      * }
      * ```
      */
-    public static String requestOrderBook(final String symbol, final int limit) throws Exception {
+    public static String requestOrderbook(final String symbol, final int limit) throws Exception {
         GateUtils.checkParamNotEmpty(symbol, "symbol");
         if (limit != 0) {
             checkParamLimitValid(limit);
@@ -226,10 +226,10 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
         return;
     }
 
-    public static String requestOrderBook(String symbol) throws Exception {
+    public static String requestOrderbook(String symbol) throws Exception {
         GateUtils.checkParamNotEmpty(symbol, "symbol");
 
-        return requestOrderBook(symbol, 0);
+        return requestOrderbook(symbol, 0);
     }
 
     private static String prepareCommonParams() {

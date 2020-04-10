@@ -23,7 +23,7 @@ public class BinanceCommunicatorTest {
 
     @Test
     public void testRequestOrderBook() throws Exception {
-        System.out.println(BinanceCommunicator.requestOrderBook(BTC_USDT_SYMBOL));
+        System.out.println(BinanceCommunicator.requestOrderbook(BTC_USDT_SYMBOL));
     }
 
 }

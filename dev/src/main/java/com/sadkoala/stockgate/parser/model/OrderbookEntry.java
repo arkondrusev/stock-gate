@@ -2,12 +2,12 @@ package com.sadkoala.stockgate.parser.model;
 
 import java.math.BigDecimal;
 
-public class OrderBookEntry {
+public class OrderbookEntry {
 
     private BigDecimal price;
     private BigDecimal qty;
 
-    public OrderBookEntry(BigDecimal price, BigDecimal qty) {
+    public OrderbookEntry(BigDecimal price, BigDecimal qty) {
         this.price = price;
         this.qty = qty;
     }
@@ -19,4 +19,5 @@ public class OrderBookEntry {
     public BigDecimal getQty() {
         return qty;
     }
+
 }

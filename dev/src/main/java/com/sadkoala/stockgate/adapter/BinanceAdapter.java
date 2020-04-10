@@ -3,7 +3,7 @@ package com.sadkoala.stockgate.adapter;
 import com.sadkoala.stockgate.GateUtils;
 import com.sadkoala.stockgate.communicator.BinanceCommunicator;
 import com.sadkoala.stockgate.parser.BinanceParser;
-import com.sadkoala.stockgate.parser.model.Order;
+import com.sadkoala.stockgate.parser.model.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -24,6 +24,14 @@ public class BinanceAdapter extends AbstractStockAdapter {
         GateUtils.checkParamNotEmpty(asset, "asset");
 
         return BinanceParser.parseAssetBalanceFree(BinanceCommunicator.requestAccountInfo(), asset);
+    }
+
+    public static Orderbook getOrderbook(String symbol, Integer limit) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+
+        String jsonOrderbook = BinanceCommunicator.requestOrderbook(symbol);
+        return new Orderbook(BinanceParser.parseOrderbookAsk(jsonOrderbook, limit),
+                BinanceParser.parseOrderbookBid(jsonOrderbook, limit));
     }
 
 }
