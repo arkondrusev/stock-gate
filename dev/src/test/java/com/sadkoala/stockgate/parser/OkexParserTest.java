@@ -27,7 +27,7 @@ public class OkexParserTest {
     @Test
     public void testParseOrderbook() throws Exception {
         String jsonResponse = "{\"asks\":[[\"6858.4\",\"0.02555115\",\"2\"],[\"6858.5\",\"0.001\",\"1\"],[\"6858.8\",\"0.008\",\"2\"]],\"bids\":[[\"6858.3\",\"2.22068959\",\"14\"],[\"6858.2\",\"0.005\",\"1\"],[\"6858.1\",\"0.814\",\"4\"]],\"timestamp\":\"2020-04-10T18:15:46.006Z\"}\n";
-        System.out.println("order book size = " + OkexParser.parseOrderbookAsks(jsonResponse,   1).size());
+        System.out.println("order book size = " + OkexParser.parseOrderbookAsk(jsonResponse,   1).size());
     }
 
 }

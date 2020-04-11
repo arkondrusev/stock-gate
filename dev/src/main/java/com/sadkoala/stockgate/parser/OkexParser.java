@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class OkexParser extends AbstractStockParser {
 
@@ -47,14 +48,14 @@ public class OkexParser extends AbstractStockParser {
     /**
      * {"asks":[["6924","0.00752523","4"],["6924.3","0.01","1"],["6924.4","0.001","1"]],"bids":[["6923.9","1.03182977","11"],["6923.5","0.001","1"],["6923.4","0.006","1"]],"timestamp":"2020-04-10T19:19:03.844Z"}
      */
-    private static List<OrderbookEntry> parseOrderbook(String jsonString, String bookType, int limit) throws IOException {
-        List<OrderbookEntry> entryList = new ArrayList<>(limit);
+    private static List<OrderbookEntry> parseOrderbook(String jsonString, String bookType, Integer limit) throws IOException {
+        List<OrderbookEntry> entryList = Objects.nonNull(limit) ? new ArrayList<>(limit) : new ArrayList<>();
         int i = 0;
         for (JsonNode entry : mapper.readTree(jsonString).get(bookType)) {
             i++;
             entryList.add(new OrderbookEntry(
                     new BigDecimal(entry.get(0).asText()), new BigDecimal(entry.get(1).asText())));
-            if (i == limit) {
+            if (limit != null && i == limit) {
                 break;
             }
         }
@@ -62,11 +63,11 @@ public class OkexParser extends AbstractStockParser {
         return entryList;
     }
 
-    public static List<OrderbookEntry> parseOrderbookAsks(String jsonString, int limit) throws IOException {
+    public static List<OrderbookEntry> parseOrderbookAsk(String jsonString, Integer limit) throws IOException {
         return parseOrderbook(jsonString,"asks", limit);
     }
 
-    public static List<OrderbookEntry> parseOrderbookBids(String jsonString, int limit) throws IOException {
+    public static List<OrderbookEntry> parseOrderbookBid(String jsonString, Integer limit) throws IOException {
         return parseOrderbook(jsonString,"bids", limit);
     }
 

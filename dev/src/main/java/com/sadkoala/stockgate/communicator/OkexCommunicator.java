@@ -92,7 +92,7 @@ public class OkexCommunicator extends AbstractStockCommunicator {
      *
      * When size is not passed in the parameters, one entry is returned; when size is 0, no entry is returned. The maximum size is 200. When requesting more than 200 entries, at most 200 entries are returned.
      */
-    public static String requestOrderbook(final String symbol, final Short limit, final Float depth) throws Exception {
+    public static String requestOrderbook(final String symbol, final Integer limit, final Float depth) throws Exception {
         GateUtils.checkParamNotEmpty(symbol, "symbol");
 
         return HttpsCommunicator.executeHttpsRequest(

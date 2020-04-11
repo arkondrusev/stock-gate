@@ -18,7 +18,7 @@ public class OkexCommunicatorTest {
 
     @Test
     public void testRequestOrderbook() throws Exception {
-        String response = OkexCommunicator.requestOrderbook("BTC-USDT", Short.valueOf("3"), null);
+        String response = OkexCommunicator.requestOrderbook("BTC-USDT", 3, null);
         System.out.println(response);
     }
 
