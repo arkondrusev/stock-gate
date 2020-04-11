@@ -70,11 +70,11 @@ public class HitbtcParser extends AbstractStockParser {
         return entryList;
     }
 
-    public static List<OrderbookEntry> parseOrderBookAsks(String jsonString, String symbol, int limit) throws IOException {
+    public static List<OrderbookEntry> parseOrderbookAsk(String jsonString, String symbol, int limit) throws IOException {
         return parseOrderBookByBookType(jsonString, symbol, "ask", limit);
     }
 
-    public static List<OrderbookEntry> parseOrderBookBids(String jsonString, String symbol, int limit) throws IOException {
+    public static List<OrderbookEntry> parseOrderbookBid(String jsonString, String symbol, int limit) throws IOException {
         return parseOrderBookByBookType(jsonString, symbol, "bid", limit);
     }
 
