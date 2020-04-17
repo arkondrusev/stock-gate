@@ -158,7 +158,7 @@ public class HitbtcCommunicator extends AbstractStockCommunicator {
         }
         Map<String,String> headers = new HashMap<>();
         headers.put("Authorization", AUTH_HEADER_VALUE);
-        return HttpsCommunicator.executeHttpsRequest(urlString.toString(), headers);
+        return HttpsCommunicator.executeGetRequest(urlString.toString(), headers);
     }
 
     private static String requestWithAuthorization(final String endpoint) throws Exception {

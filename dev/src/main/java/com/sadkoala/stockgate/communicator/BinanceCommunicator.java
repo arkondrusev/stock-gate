@@ -244,7 +244,7 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
         String urlString = HOST + endpoint + "?" + requestParams + "&signature=" + makeSignature(requestParams);
         Map<String,String> headers = new HashMap<>();
         headers.put(HEADER_MBX_APIKEY, API_KEY_VALUE);
-        return HttpsCommunicator.executeHttpsRequest(urlString, headers);
+        return HttpsCommunicator.executeGetRequest(urlString, headers);
     }
 
     private static String requestWithAuthorization(String endpoint) throws Exception {

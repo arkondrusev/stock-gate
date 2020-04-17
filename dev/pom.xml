@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.sadkoala</groupId>
     <artifactId>stock-gate</artifactId>
-    <version>0.0.6</version>
+    <version>0.0.7</version>
     <name>stock-gate</name>
     <description>Stock Exchanges Gate</description>
 
@@ -44,7 +44,7 @@
 		<dependency>
 			<groupId>com.sadkoala</groupId>
 			<artifactId>https-communicator</artifactId>
-			<version>0.0.4</version>
+			<version>0.0.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>

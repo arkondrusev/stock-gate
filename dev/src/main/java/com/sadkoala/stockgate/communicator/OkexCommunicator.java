@@ -120,7 +120,7 @@ public class OkexCommunicator extends AbstractStockCommunicator {
         headers.put("OK-ACCESS-SIGN", makeSign(timestamp + "GET" + requestPath));
         headers.put("OK-ACCESS-TIMESTAMP", timestamp);
         headers.put("OK-ACCESS-PASSPHRASE", PASSPHRASE_VALUE);
-        return HttpsCommunicator.executeHttpsRequest(HOST + requestPath, headers);
+        return HttpsCommunicator.executeGetRequest(HOST + requestPath, headers);
     }
 
     private static String requestWithAuthorization(final String endpoint) throws Exception {
