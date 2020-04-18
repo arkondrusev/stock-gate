@@ -15,7 +15,12 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
     private static final String API_KEY_VALUE = "0Wm7F0NYk38njHwhmPzcxT14A5cbGs5Ri5d7TnvKJbizulrp5EIDHoA0M6FYunuk";
 
     private static final String HOST = "api.binance.com";
-    public static final String HEADER_MBX_APIKEY = "X-MBX-APIKEY";
+
+    private static final String HEADER_MBX_APIKEY = "X-MBX-APIKEY";
+
+    private static final String ENDPOINT_ORDER = "/api/v3/order";
+
+    private static final String REQUEST_PARAM_SYMBOL = "symbol";
 
     /**
      * ### Symbol price ticker
@@ -62,7 +67,7 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
     public static String requestLatestSymbolPrice(String symbol) throws Exception {
         GateUtils.checkParamNotEmpty(symbol, "symbol");
 
-        return HttpsCommunicator.executeHttpsRequest(HOST + "/api/v3/ticker/price?symbol=" + symbol);
+        return HttpsCommunicator.executeHttpsRequest(HOST + "/api/v3/ticker/price?" + REQUEST_PARAM_SYMBOL + "=" + symbol);
     }
 
     /**
@@ -114,7 +119,7 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
     public static String requestOpenOrders(String symbol) throws Exception {
         GateUtils.checkParamNotEmpty(symbol, "symbol");
 
-        return requestGetWithAuthorization("/api/v3/openOrders", "symbol=" + symbol + "&" + prepareCommonParams());
+        return requestGetWithAuthorization("/api/v3/openOrders", REQUEST_PARAM_SYMBOL + "=" + symbol + "&" + prepareCommonParams());
     }
 
     /**
@@ -216,7 +221,7 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
             checkParamLimitValid(limit);
         }
 
-        String urlString = HOST + "/api/v3/depth" + "?" + "symbol=" + symbol;
+        String urlString = HOST + "/api/v3/depth" + "?" + REQUEST_PARAM_SYMBOL + "=" + symbol;
         if (limit != 0) {
             urlString = urlString + "&limit=" + limit;
         }
@@ -234,11 +239,11 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
     }
 
     public static String requestNewOrder(String symbol, String side, String type, BigDecimal qty, BigDecimal price) throws Exception {
-        return executeRequestNewOrder("/api/v3/order", symbol, side, type, qty, price);
+        return executeRequestNewOrder(ENDPOINT_ORDER, symbol, side, type, qty, price);
     }
 
     public static String requestNewOrderTest(String symbol, String side, String type, BigDecimal qty, BigDecimal price) throws Exception {
-        return executeRequestNewOrder("/api/v3/order/test", symbol, side, type, qty, price);
+        return executeRequestNewOrder(ENDPOINT_ORDER + "/test", symbol, side, type, qty, price);
     }
 
     private static String executeRequestNewOrder(String endpoint, String symbol, String side, String type, BigDecimal qty, BigDecimal price) throws Exception {
@@ -249,7 +254,7 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
         GateUtils.checkParamNotNull(qty, "qty");
 
         URLParamsBuilder paramsBuilder = URLParamsBuilder.newBuilder();
-        paramsBuilder.addParamIfNotEmpty("symbol", symbol)
+        paramsBuilder.addParamIfNotEmpty(REQUEST_PARAM_SYMBOL, symbol)
                 .addParamIfNotEmpty("side", side)
                 .addParamIfNotEmpty("type", type)
                 .addParamIfNotEmpty("quantity", qty.toPlainString());
@@ -263,8 +268,15 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
         return requestPostWithAuthorization(endpoint, paramsBuilder.build());
     }
 
-    public static String requestCancelOrder() throws Exception {
-        String urlString = null;
+    public static String requestCancelOrder(String symbol, Long orderId) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        GateUtils.checkParamNotNull(orderId, "orderId");
+
+        URLParamsBuilder paramsBuilder = URLParamsBuilder.newBuilder();
+        paramsBuilder.addParamIfNotEmpty(REQUEST_PARAM_SYMBOL, symbol);
+        paramsBuilder.addParamIfNotEmpty("orderId", orderId);
+        addCommonParams(paramsBuilder);
+        String urlString = HOST + ENDPOINT_ORDER + "?" + signParams(paramsBuilder.build());
         Map<String,String> headers = new HashMap<>();
         headers.put(HEADER_MBX_APIKEY, API_KEY_VALUE);
         return HttpsCommunicator.executeHttpsRequest(urlString, headers, "DELETE", null);

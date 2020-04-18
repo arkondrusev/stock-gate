@@ -1,6 +1,9 @@
 package com.sadkoala.stockgate.communicator;
 
+import com.sadkoala.stockgate.adapter.BinanceAdapter;
 import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
 
 public class BinanceCommunicatorTest {
 
@@ -27,8 +30,14 @@ public class BinanceCommunicatorTest {
     }
 
     @Test
-    public void testRequestNewOrder() throws Exception {
-//        System.out.println(BinanceCommunicator.requestNewOrder(BTC_USDT_SYMBOL, "BUY", "LIMIT", new BigDecimal("0.002"), new BigDecimal("6000")));
+    public void testRequestNewOrderAndCancelOrder() throws Exception {
+        BigDecimal btcPrice = BinanceAdapter.getBtcPrice();
+
+        String resp = BinanceCommunicator.requestNewOrder(BTC_USDT_SYMBOL, "BUY", "LIMIT", new BigDecimal("0.002"), btcPrice.subtract(new BigDecimal("1000")));
+        System.out.println(resp);
+        Long orderId = Long.valueOf(resp.substring(resp.indexOf("\"orderId\":")+"\"orderId\":".length(),resp.indexOf(",\"orderListId\"")));
+
+        System.out.println(BinanceCommunicator.requestCancelOrder(BTC_USDT_SYMBOL, orderId));
     }
 
 }
