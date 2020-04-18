@@ -26,4 +26,9 @@ public class BinanceCommunicatorTest {
         System.out.println(BinanceCommunicator.requestOrderbook(BTC_USDT_SYMBOL));
     }
 
+    @Test
+    public void testRequestNewOrder() throws Exception {
+//        System.out.println(BinanceCommunicator.requestNewOrder(BTC_USDT_SYMBOL, "BUY", "LIMIT", new BigDecimal("0.002"), new BigDecimal("6000")));
+    }
+
 }

@@ -66,6 +66,12 @@ public abstract class AbstractStockCommunicator {
             return this;
         }
 
+        public URLParamsBuilder addParamIfNotEmpty(String paramName, long paramValue) {
+            addParamIfNotEmpty(paramName, String.valueOf(paramValue));
+
+            return this;
+        }
+
         public URLParamsBuilder addParamIfNotEmtpy(String paramName, String paramValue, String defaultValue) {
             GateUtils.checkParamNotEmpty(paramName, "paramName");
 
