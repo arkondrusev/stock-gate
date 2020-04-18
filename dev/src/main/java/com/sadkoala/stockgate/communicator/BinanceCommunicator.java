@@ -21,200 +21,24 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
     private static final String ENDPOINT_ORDER = "/api/v3/order";
 
     private static final String REQUEST_PARAM_SYMBOL = "symbol";
+    public static final String REQUEST_PARAM_CLIENT_ORDER_ID = "origClientOrderId";
 
-    /**
-     * ### Symbol price ticker
-     * ```
-     * GET /api/v3/ticker/price
-     * ```
-     * Latest price for a symbol or symbols.
-     *
-     * **Weight:**
-     * 1 for a single symbol; **2** when the symbol parameter is omitted
-     *
-     * **Parameters:**
-     *
-     * Name | Type | Mandatory | Description
-     * ------------ | ------------ | ------------ | ------------
-     * symbol | STRING | NO |
-     *
-     * * If the symbol is not sent, prices for all symbols will be returned in an array.
-     *
-     * **Response:**
-     * ```javascript
-     * {
-     *   "symbol": "LTCBTC",
-     *   "price": "4.00000200"
-     * }
-     * ```
-     * OR
-     * ```javascript
-     * [
-     *   {
-     *     "symbol": "LTCBTC",
-     *     "price": "4.00000200"
-     *   },
-     *   {
-     *     "symbol": "ETHBTC",
-     *     "price": "0.07946600"
-     *   }
-     * ]
-     * ```
-     *
-     * #symbol - example BTCUSD
-     *
-     */
     public static String requestLatestSymbolPrice(String symbol) throws Exception {
         GateUtils.checkParamNotEmpty(symbol, "symbol");
 
         return HttpsCommunicator.executeHttpsRequest(HOST + "/api/v3/ticker/price?" + REQUEST_PARAM_SYMBOL + "=" + symbol);
     }
 
-    /**
-     * ### Current open orders (USER_DATA)
-     * ```
-     * GET /api/v3/openOrders  (HMAC SHA256)
-     * ```
-     * Get all open orders on a symbol. **Careful** when accessing this with no symbol.
-     *
-     * **Weight:**
-     * 1 for a single symbol; **40** when the symbol parameter is omitted
-     *
-     * **Parameters:**
-     *
-     * Name | Type | Mandatory | Description
-     * ------------ | ------------ | ------------ | ------------
-     * symbol | STRING | NO |
-     * recvWindow | LONG | NO | The value cannot be greater than ```60000```
-     * timestamp | LONG | YES |
-     *
-     * * If the symbol is not sent, orders for all symbols will be returned in an array.
-     *
-     * **Response:**
-     * ```javascript
-     * [
-     *   {
-     *     "symbol": "LTCBTC",
-     *     "orderId": 1,
-     *     "orderListId": -1, //Unless OCO, the value will always be -1
-     *     "clientOrderId": "myOrder1",
-     *     "price": "0.1",
-     *     "origQty": "1.0",
-     *     "executedQty": "0.0",
-     *     "cummulativeQuoteQty": "0.0",
-     *     "status": "NEW",
-     *     "timeInForce": "GTC",
-     *     "type": "LIMIT",
-     *     "side": "BUY",
-     *     "stopPrice": "0.0",
-     *     "icebergQty": "0.0",
-     *     "time": 1499827319559,
-     *     "updateTime": 1499827319559,
-     *     "isWorking": true,
-     *     "origQuoteOrderQty": "0.000000"
-     *   }
-     * ]
-     * ```
-     */
     public static String requestOpenOrders(String symbol) throws Exception {
         GateUtils.checkParamNotEmpty(symbol, "symbol");
 
         return requestGetWithAuthorization("/api/v3/openOrders", REQUEST_PARAM_SYMBOL + "=" + symbol + "&" + prepareCommonParams());
     }
 
-    /**
-     * ### Account information (USER_DATA)
-     * ```
-     * GET /api/v3/account (HMAC SHA256)
-     * ```
-     * Get current account information.
-     *
-     * **Weight:**
-     * 5
-     *
-     * **Parameters:**
-     *
-     * Name | Type | Mandatory | Description
-     * ------------ | ------------ | ------------ | ------------
-     * recvWindow | LONG | NO | The value cannot be greater than ```60000```
-     * timestamp | LONG | YES |
-     *
-     * **Response:**
-     * ```javascript
-     * {
-     *   "makerCommission": 15,
-     *   "takerCommission": 15,
-     *   "buyerCommission": 0,
-     *   "sellerCommission": 0,
-     *   "canTrade": true,
-     *   "canWithdraw": true,
-     *   "canDeposit": true,
-     *   "updateTime": 123456789,
-     *   "accountType": "SPOT",
-     *   "balances": [
-     *     {
-     *       "asset": "BTC",
-     *       "free": "4723846.89208129",
-     *       "locked": "0.00000000"
-     *     },
-     *     {
-     *       "asset": "LTC",
-     *       "free": "4763368.68006011",
-     *       "locked": "0.00000000"
-     *     }
-     *   ]
-     * }
-     * ```
-     */
     public static String requestAccountInfo() throws Exception {
         return requestGetWithAuthorization("/api/v3/account", prepareCommonParams());
     }
 
-    /**
-     * ## Market Data endpoints
-     * ### Order book
-     * ```
-     * GET /api/v3/depth
-     * ```
-     *
-     * **Weight:**
-     * Adjusted based on the limit:
-     *
-     *
-     * Limit | Weight
-     * ------------ | ------------
-     * 5, 10, 20, 50, 100 | 1
-     * 500 | 5
-     * 1000 | 10
-     * 5000| 50
-     *
-     *
-     * **Parameters:**
-     *
-     * Name | Type | Mandatory | Description
-     * ------------ | ------------ | ------------ | ------------
-     * symbol | STRING | YES |
-     * limit | INT | NO | Default 100; max 5000. Valid limits:[5, 10, 20, 50, 100, 500, 1000, 5000]
-     *
-     * **Response:**
-     * ```javascript
-     * {
-     *   "lastUpdateId": 1027024,
-     *   "bids": [
-     *     [
-     *       "4.00000000",     // PRICE
-     *       "431.00000000"    // QTY
-     *     ]
-     *   ],
-     *   "asks": [
-     *     [
-     *       "4.00000200",
-     *       "12.00000000"
-     *     ]
-     *   ]
-     * }
-     * ```
-     */
     public static String requestOrderbook(final String symbol, final int limit) throws Exception {
         GateUtils.checkParamNotEmpty(symbol, "symbol");
         if (limit != 0) {
@@ -239,14 +63,6 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
     }
 
     public static String requestNewOrder(String symbol, String side, String type, BigDecimal qty, BigDecimal price) throws Exception {
-        return executeRequestNewOrder(ENDPOINT_ORDER, symbol, side, type, qty, price);
-    }
-
-    public static String requestNewOrderTest(String symbol, String side, String type, BigDecimal qty, BigDecimal price) throws Exception {
-        return executeRequestNewOrder(ENDPOINT_ORDER + "/test", symbol, side, type, qty, price);
-    }
-
-    private static String executeRequestNewOrder(String endpoint, String symbol, String side, String type, BigDecimal qty, BigDecimal price) throws Exception {
         GateUtils.checkParamNotEmpty(symbol, "symbol");
         GateUtils.checkParamNotEmpty(side, "side");
         GateUtils.checkParamNotEmpty(type, "type");
@@ -257,7 +73,8 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
         paramsBuilder.addParamIfNotEmpty(REQUEST_PARAM_SYMBOL, symbol)
                 .addParamIfNotEmpty("side", side)
                 .addParamIfNotEmpty("type", type)
-                .addParamIfNotEmpty("quantity", qty.toPlainString());
+                .addParamIfNotEmpty("quantity", qty.toPlainString())
+                .addParamIfNotEmpty("newOrderRespType", "FULL");
         if ("LIMIT".equals(type)) {
             GateUtils.checkParamNotNull(price, "price");
             paramsBuilder.addParamIfNotEmpty("price", price.toPlainString());
@@ -265,16 +82,28 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
         }
         addCommonParams(paramsBuilder);
 
-        return requestPostWithAuthorization(endpoint, paramsBuilder.build());
+        return requestPostWithAuthorization(ENDPOINT_ORDER, paramsBuilder.build());
     }
 
-    public static String requestCancelOrder(String symbol, Long orderId) throws Exception {
+    public static String requestCheckOrderStatus(String symbol, String orderId) throws Exception {
         GateUtils.checkParamNotEmpty(symbol, "symbol");
-        GateUtils.checkParamNotNull(orderId, "orderId");
+        GateUtils.checkParamNotEmpty(orderId, "orderId");
+
+        URLParamsBuilder paramsBuilder = URLParamsBuilder.newBuilder();
+        paramsBuilder.addParamIfNotEmpty(REQUEST_PARAM_SYMBOL, symbol)
+                .addParamIfNotEmpty(REQUEST_PARAM_CLIENT_ORDER_ID, orderId);
+        addCommonParams(paramsBuilder);
+
+        return requestGetWithAuthorization(ENDPOINT_ORDER, paramsBuilder.build());
+    }
+
+    public static String requestCancelOrder(String symbol, String orderId) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(orderId, "orderId");
 
         URLParamsBuilder paramsBuilder = URLParamsBuilder.newBuilder();
         paramsBuilder.addParamIfNotEmpty(REQUEST_PARAM_SYMBOL, symbol);
-        paramsBuilder.addParamIfNotEmpty("orderId", orderId);
+        paramsBuilder.addParamIfNotEmpty(REQUEST_PARAM_CLIENT_ORDER_ID, orderId);
         addCommonParams(paramsBuilder);
         String urlString = HOST + ENDPOINT_ORDER + "?" + signParams(paramsBuilder.build());
         Map<String,String> headers = new HashMap<>();

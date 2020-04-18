@@ -35,7 +35,7 @@ public class BinanceCommunicatorTest {
 
         String resp = BinanceCommunicator.requestNewOrder(BTC_USDT_SYMBOL, "BUY", "LIMIT", new BigDecimal("0.002"), btcPrice.subtract(new BigDecimal("1000")));
         System.out.println(resp);
-        Long orderId = Long.valueOf(resp.substring(resp.indexOf("\"orderId\":")+"\"orderId\":".length(),resp.indexOf(",\"orderListId\"")));
+        String orderId = resp.substring(resp.indexOf("\"clientOrderId\":\"")+"\"clientOrderId\":\"".length(),resp.indexOf("\",\"transactTime\""));
 
         System.out.println(BinanceCommunicator.requestCancelOrder(BTC_USDT_SYMBOL, orderId));
     }

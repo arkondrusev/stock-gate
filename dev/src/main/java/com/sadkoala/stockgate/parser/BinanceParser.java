@@ -76,4 +76,18 @@ public class BinanceParser extends AbstractStockParser {
         return parseOrderBookByBookType(jsonString, "bids", limit);
     }
 
+    /**
+     * {"symbol":"BTCUSDT","orderId":1869476469,"orderListId":-1,"clientOrderId":"LFp8Sxzt81BZhxVg0a8LXs","transactTime":1587237988189,"price":"6215.02000000","origQty":"0.00200000","executedQty":"0.00000000","cummulativeQuoteQty":"0.00000000","status":"NEW","timeInForce":"GTC","type":"LIMIT","side":"BUY","fills":[]}
+     */
+    public static void parseCreateOrder(String jsonString) throws IOException {
+
+    }
+
+    /**
+     * {"symbol":"BTCUSDT","origClientOrderId":"LFp8Sxzt81BZhxVg0a8LXs","orderId":1869476469,"orderListId":-1,"clientOrderId":"RTVrvzNrvItZoAK6TPgm8o","price":"6215.02000000","origQty":"0.00200000","executedQty":"0.00000000","cummulativeQuoteQty":"0.00000000","status":"CANCELED","timeInForce":"GTC","type":"LIMIT","side":"BUY"}
+     */
+    public static Long parseCancelOrder(String jsonString) throws IOException {
+        return null;
+    }
+
 }
