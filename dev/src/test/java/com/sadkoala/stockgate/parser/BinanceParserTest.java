@@ -29,9 +29,9 @@ public class BinanceParserTest {
     }
 
     @Test
-    public void testParseCreateNewOrderResponse() {
+    public void testParseCreateNewOrderResponse() throws IOException {
         String jsonString = "{\"symbol\":\"BTCUSDT\",\"orderId\":1869476469,\"orderListId\":-1,\"clientOrderId\":\"LFp8Sxzt81BZhxVg0a8LXs\",\"transactTime\":1587237988189,\"price\":\"6215.02000000\",\"origQty\":\"0.00200000\",\"executedQty\":\"0.00000000\",\"cummulativeQuoteQty\":\"0.00000000\",\"status\":\"NEW\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"side\":\"BUY\",\"fills\":[]}\n";
-        System.out.println("order status : " + BinanceParser.parseCreateOrderResponse(jsonString));
+        System.out.println("order status : " + BinanceParser.parseCreateOrderResponse(jsonString).getStatus());
     }
 
     @Test

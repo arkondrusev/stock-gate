@@ -27,13 +27,7 @@ public class BinanceParser extends AbstractStockParser {
     public static List<Order> parseOpenOrders(final String jsonString) throws IOException {
         List<Order> parsedOrders = new ArrayList<>();
         for (JsonNode order : mapper.readTree(jsonString)) {
-            parsedOrders.add(new Order("binance",
-                    order.get("symbol").asText(),
-                    order.get("orderId").asText(),
-                    new BigDecimal(order.get("price").asText()),
-                    new BigDecimal(order.get("origQty").asText()),
-                    order.get("status").asText(),
-                    order.get("time").asLong()));
+            parsedOrders.add(parseOrder(order, "time"));
         }
         return parsedOrders;
     }
@@ -81,8 +75,8 @@ public class BinanceParser extends AbstractStockParser {
     /**
      * {"symbol":"BTCUSDT","orderId":1869476469,"orderListId":-1,"clientOrderId":"LFp8Sxzt81BZhxVg0a8LXs","transactTime":1587237988189,"price":"6215.02000000","origQty":"0.00200000","executedQty":"0.00000000","cummulativeQuoteQty":"0.00000000","status":"NEW","timeInForce":"GTC","type":"LIMIT","side":"BUY","fills":[]}
      */
-    public static String parseCreateOrderResponse(String jsonString) {
-        return parseStatus(jsonString);
+    public static Order parseCreateOrderResponse(String jsonString) throws IOException {
+        return parseOrder(mapper.readTree(jsonString), "transactTime");
     }
 
     /**
@@ -106,6 +100,16 @@ public class BinanceParser extends AbstractStockParser {
             return matcher.group(1);
         }
         return null;
+    }
+
+    private static Order parseOrder(JsonNode orderNode, String createTimeNodeName) {
+        return new Order("binance",
+                orderNode.get("symbol").asText(),
+                orderNode.get("orderId").asText(),
+                new BigDecimal(orderNode.get("price").asText()),
+                new BigDecimal(orderNode.get("origQty").asText()),
+                orderNode.get("status").asText(),
+                orderNode.get(createTimeNodeName).asLong());
     }
 
 }

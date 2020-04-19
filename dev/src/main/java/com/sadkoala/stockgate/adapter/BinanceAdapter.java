@@ -34,4 +34,12 @@ public class BinanceAdapter extends AbstractStockAdapter {
                 BinanceParser.parseOrderbookBid(jsonOrderbook, limit));
     }
 
+    public static Order placeMarketOrder(String symbol, String side, BigDecimal qty) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(side, "side");
+        GateUtils.checkParamNotNull(qty, "qty");
+
+        return BinanceParser.parseCreateOrderResponse(BinanceCommunicator.requestNewOrder(symbol, side, "MARKET", qty, null));
+    }
+
 }
