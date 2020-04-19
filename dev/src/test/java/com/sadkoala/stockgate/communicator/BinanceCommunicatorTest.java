@@ -1,6 +1,7 @@
 package com.sadkoala.stockgate.communicator;
 
 import com.sadkoala.stockgate.adapter.BinanceAdapter;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -30,14 +31,22 @@ public class BinanceCommunicatorTest {
     }
 
     @Test
-    public void testRequestNewOrderAndCancelOrder() throws Exception {
+    public void testRequestNewOrder_CheckOrder_CancelOrder() throws Exception {
         BigDecimal btcPrice = BinanceAdapter.getBtcPrice();
 
         String resp = BinanceCommunicator.requestNewOrder(BTC_USDT_SYMBOL, "BUY", "LIMIT", new BigDecimal("0.002"), btcPrice.subtract(new BigDecimal("1000")));
         System.out.println(resp);
+        Assertions.assertTrue(resp.contains("\"status\":\"NEW\""));
         String orderId = resp.substring(resp.indexOf("\"clientOrderId\":\"")+"\"clientOrderId\":\"".length(),resp.indexOf("\",\"transactTime\""));
 
-        System.out.println(BinanceCommunicator.requestCancelOrder(BTC_USDT_SYMBOL, orderId));
+        resp = BinanceCommunicator.requestCheckOrderStatus(BTC_USDT_SYMBOL, orderId);
+        System.out.println(resp);
+        Assertions.assertTrue(resp.contains("\"status\":\"NEW\""));
+
+
+        resp = BinanceCommunicator.requestCancelOrder(BTC_USDT_SYMBOL, orderId);
+        System.out.println(resp);
+        Assertions.assertTrue(resp.contains("\"status\":\"CANCELED\""));
     }
 
 }
