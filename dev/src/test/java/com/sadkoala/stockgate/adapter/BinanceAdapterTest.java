@@ -2,6 +2,7 @@ package com.sadkoala.stockgate.adapter;
 
 import com.sadkoala.stockgate.parser.model.Order;
 import com.sadkoala.stockgate.parser.model.Orderbook;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -34,6 +35,20 @@ public class BinanceAdapterTest {
         Orderbook orderbook = BinanceAdapter.getOrderbook(BTC_USDT_SYMBOL, 1);
         System.out.println("orderbook size: ask - " + orderbook.getAsk().getList().size()
                 + " bid - " + orderbook.getBid().getList().size());
+    }
+
+    @Test
+    public void testPlaceOrder_CheckOrderStatus_CancelOrder() throws Exception {
+        BigDecimal btcPrice = BinanceAdapter.getBtcPrice();
+
+        Order order = BinanceAdapter.placeLimitOrder(BTC_USDT_SYMBOL, "BUY", new BigDecimal("0.002"), btcPrice.subtract(new BigDecimal("1000")));
+        Assertions.assertTrue("NEW".equals(order.getStatus()));
+
+        String status = BinanceAdapter.checkOrderStatus(order.getSymbol(), order.getOrderId());
+        Assertions.assertTrue("NEW".equals(status));
+
+        status = BinanceAdapter.cancelOrder(order.getSymbol(), order.getOrderId());
+        Assertions.assertTrue("CANCELED".equals(status));
     }
 
 }

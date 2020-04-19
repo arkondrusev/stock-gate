@@ -42,4 +42,27 @@ public class BinanceAdapter extends AbstractStockAdapter {
         return BinanceParser.parseCreateOrderResponse(BinanceCommunicator.requestNewOrder(symbol, side, "MARKET", qty, null));
     }
 
+    public static Order placeLimitOrder(String symbol, String side, BigDecimal qty, BigDecimal price) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(side, "side");
+        GateUtils.checkParamNotNull(qty, "qty");
+        GateUtils.checkParamNotNull(price, "price");
+
+        return BinanceParser.parseCreateOrderResponse(BinanceCommunicator.requestNewOrder(symbol, side, "LIMIT", qty, price));
+    }
+
+    public static String checkOrderStatus(String symbol, String orderId) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(orderId, "orderId");
+
+        return BinanceParser.parseCheckOrderStatusResponse(BinanceCommunicator.requestCheckOrderStatus(symbol, orderId));
+    }
+
+    public static String cancelOrder(String symbol, String orderId) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(orderId, "orderId");
+
+        return BinanceParser.parseCancelOrderResponse(BinanceCommunicator.requestCancelOrder(symbol, orderId));
+    }
+
 }
