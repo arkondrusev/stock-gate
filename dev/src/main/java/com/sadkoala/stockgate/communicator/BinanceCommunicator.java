@@ -112,7 +112,9 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
     }
 
     private static String prepareCommonParams() {
-        return "recvWindow=60000&timestamp=" + getTimestamp();
+        URLParamsBuilder paramsBuilder = URLParamsBuilder.newBuilder();
+        addCommonParams(paramsBuilder);
+        return paramsBuilder.build();
     }
 
     private static void addCommonParams(URLParamsBuilder paramsBuilder) {
