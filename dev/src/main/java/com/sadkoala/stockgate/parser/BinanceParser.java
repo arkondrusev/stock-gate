@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class BinanceParser extends AbstractStockParser {
 
@@ -79,14 +81,30 @@ public class BinanceParser extends AbstractStockParser {
     /**
      * {"symbol":"BTCUSDT","orderId":1869476469,"orderListId":-1,"clientOrderId":"LFp8Sxzt81BZhxVg0a8LXs","transactTime":1587237988189,"price":"6215.02000000","origQty":"0.00200000","executedQty":"0.00000000","cummulativeQuoteQty":"0.00000000","status":"NEW","timeInForce":"GTC","type":"LIMIT","side":"BUY","fills":[]}
      */
-    public static void parseCreateOrder(String jsonString) throws IOException {
+    public static String parseCreateOrderResponse(String jsonString) {
+        return parseStatus(jsonString);
+    }
 
+    /**
+     * {"symbol":"BTCUSDT","orderId":1876373751,"orderListId":-1,"clientOrderId":"Eqjda89LX2QUWNfbkwRMQR","price":"6122.09000000","origQty":"0.00200000","executedQty":"0.00000000","cummulativeQuoteQty":"0.00000000","status":"NEW","timeInForce":"GTC","type":"LIMIT","side":"BUY","stopPrice":"0.00000000","icebergQty":"0.00000000","time":1587313870739,"updateTime":1587313870739,"isWorking":true,"origQuoteOrderQty":"0.00000000"}
+     */
+    public static String parseCheckOrderStatusResponse(String jsonString) {
+        return parseStatus(jsonString);
     }
 
     /**
      * {"symbol":"BTCUSDT","origClientOrderId":"LFp8Sxzt81BZhxVg0a8LXs","orderId":1869476469,"orderListId":-1,"clientOrderId":"RTVrvzNrvItZoAK6TPgm8o","price":"6215.02000000","origQty":"0.00200000","executedQty":"0.00000000","cummulativeQuoteQty":"0.00000000","status":"CANCELED","timeInForce":"GTC","type":"LIMIT","side":"BUY"}
      */
-    public static Long parseCancelOrder(String jsonString) throws IOException {
+    public static String parseCancelOrderResponse(String jsonString) {
+        return parseStatus(jsonString);
+    }
+
+    private static String parseStatus(String inputString) {
+        Pattern pattern = Pattern.compile("\"status\":\"([A-Z]+)\",");
+        Matcher matcher = pattern.matcher(inputString);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
         return null;
     }
 

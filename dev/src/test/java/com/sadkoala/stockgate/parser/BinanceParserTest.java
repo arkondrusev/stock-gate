@@ -28,4 +28,22 @@ public class BinanceParserTest {
         System.out.println("order book size = " + BinanceParser.parseOrderbookAsk(jsonString,  1).size());
     }
 
+    @Test
+    public void testParseCreateNewOrderResponse() {
+        String jsonString = "{\"symbol\":\"BTCUSDT\",\"orderId\":1869476469,\"orderListId\":-1,\"clientOrderId\":\"LFp8Sxzt81BZhxVg0a8LXs\",\"transactTime\":1587237988189,\"price\":\"6215.02000000\",\"origQty\":\"0.00200000\",\"executedQty\":\"0.00000000\",\"cummulativeQuoteQty\":\"0.00000000\",\"status\":\"NEW\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"side\":\"BUY\",\"fills\":[]}\n";
+        System.out.println("order status : " + BinanceParser.parseCreateOrderResponse(jsonString));
+    }
+
+    @Test
+    public void testParseCheckOrderStatusResponse() {
+        String jsonString = "{\"symbol\":\"BTCUSDT\",\"orderId\":1876373751,\"orderListId\":-1,\"clientOrderId\":\"Eqjda89LX2QUWNfbkwRMQR\",\"price\":\"6122.09000000\",\"origQty\":\"0.00200000\",\"executedQty\":\"0.00000000\",\"cummulativeQuoteQty\":\"0.00000000\",\"status\":\"NEW\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"side\":\"BUY\",\"stopPrice\":\"0.00000000\",\"icebergQty\":\"0.00000000\",\"time\":1587313870739,\"updateTime\":1587313870739,\"isWorking\":true,\"origQuoteOrderQty\":\"0.00000000\"}\n";
+        System.out.println("order status : " + BinanceParser.parseCheckOrderStatusResponse(jsonString));
+    }
+
+    @Test
+    public void testParseCancelOrderResponse() {
+        String jsonString = "{\"symbol\":\"BTCUSDT\",\"origClientOrderId\":\"Eqjda89LX2QUWNfbkwRMQR\",\"orderId\":1876373751,\"orderListId\":-1,\"clientOrderId\":\"Tyev5AV7YY3nnHnaglJpdE\",\"price\":\"6122.09000000\",\"origQty\":\"0.00200000\",\"executedQty\":\"0.00000000\",\"cummulativeQuoteQty\":\"0.00000000\",\"status\":\"CANCELED\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"side\":\"BUY\"}\n";
+        System.out.println("order status : " + BinanceParser.parseCancelOrderResponse(jsonString));
+    }
+
 }

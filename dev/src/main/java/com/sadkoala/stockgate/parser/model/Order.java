@@ -10,16 +10,16 @@ public class Order {
     private BigDecimal price;
     private BigDecimal qty;
     private String status;
-    private Long time;
+    private Long createTime;
 
-    public Order(String stock, String symbol, String orderId, BigDecimal price, BigDecimal qty, String status, Long time) {
+    public Order(String stock, String symbol, String orderId, BigDecimal price, BigDecimal qty, String status, Long createTime) {
         this.stock = stock;
         this.symbol = symbol;
         this.orderId = orderId;
         this.price = price;
         this.qty = qty;
         this.status = status;
-        this.time = time;
+        this.createTime = createTime;
     }
 
     public String getStock() {
@@ -46,8 +46,8 @@ public class Order {
         return status;
     }
 
-    public Long getTime() {
-        return time;
+    public Long getCreateTime() {
+        return createTime;
     }
 
 }
