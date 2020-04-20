@@ -14,113 +14,24 @@ public class HitbtcCommunicator extends AbstractStockCommunicator {
     private static final String PRIVATE_KEY_VALUE = "38ae01062504c26ce0e3a295f25eb628";
     private static final String SECRET_KEY_VALUE = "be45b2caa23f600bfb0764ac5bd05fa0";
 
-    private static final String HOST = "api.hitbtc.com";
-
     private static final String AUTH_HEADER_VALUE = "Basic "
             + toString(encodeBase64(toByteArr(PRIVATE_KEY_VALUE + ":" + SECRET_KEY_VALUE)));
 
-    /**
-     * #### Get Active orders
-     *
-     * `GET /api/2/order`
-     *
-     * Return array of active orders.
-     *
-     * Parameters:
-     *
-     * | Name | Type | Description |
-     * |:---|:---:|:---|
-     * | symbol | String | Optional parameter to filter active orders by symbol |
-     *
-     * Response: Array of orders
-     *
-     * Example response:
-     * ```json
-     * [
-     *   {
-     *     "id": 840450210,
-     *     "clientOrderId": "c1837634ef81472a9cd13c81e7b91401",
-     *     "symbol": "ETHBTC",
-     *     "side": "buy",
-     *     "status": "partiallyFilled",
-     *     "type": "limit",
-     *     "timeInForce": "GTC",
-     *     "quantity": "0.020",
-     *     "price": "0.046001",
-     *     "cumQuantity": "0.005",
-     *     "createdAt": "2017-05-12T17:17:57.437Z",
-     *     "updatedAt": "2017-05-12T17:18:08.610Z"
-     *   }
-     * ]
-     * ```
-     */
+
+    private static final String HOST = "api.hitbtc.com";
+
+    private static final String ENDPOINT_ORDER = "/api/2/order";
+
     public static String requestOpenOrders(String symbol) throws Exception {
         GateUtils.checkParamNotEmpty(symbol, "symbol");
 
         return requestWithAuthorization("/api/2/order", "symbol=" + symbol);
     }
 
-    /**
-     * ### Trading Balance
-     *
-     * `GET /api/2/trading/balance`
-     *
-     * Responses:
-     *
-     * | Name | Type | Description |
-     * |:---|:---:|:---|
-     * | currency | String |  |
-     * | available | Number | Amount available for trading or transfer to main account |
-     * | reserved | Number | Amount reserved for active orders or incomplete transfers to main account |
-     *
-     * Example response:
-     * ```json
-     *     [
-     *       {
-     *         "currency": "ETH",
-     *         "available": "10.000000000",
-     *         "reserved": "0.560000000"
-     *       },
-     *       {
-     *         "currency": "BTC",
-     *         "available": "0.010205869",
-     *         "reserved": "0"
-     *       }
-     *     ]
-     * ```
-     */
     public static String requestTradingBalance() throws Exception {
         return requestWithAuthorization("/api/2/trading/balance");
     }
 
-    /**
-     * #### Orderbook
-     *
-     * `GET /api/2/public/orderbook`
-     *
-     * An Order Book is an electronic list of buy and sell orders for a specific symbol, structured by price level.
-     *
-     * You can optionally use comma-separated list of symbols. If it is not provided, null or empty, the request returns an Order Book for all symbols.
-     *
-     * Requires no API key Access Rights.
-     *
-     * Parameters:
-     *
-     * Name	Type	Description
-     * limit	Number	Limit of Order Book levels
-     * Default value: 100
-     * Set 0 to view full list of Order Book levels.
-     * symbols	String	Comma-separated list of symbol codes. Optional parameter
-     * Responses:
-     *
-     * Name	Type	Description
-     * ask	Array	Ask side array of levels
-     * bid	Array	Bid side array of levels
-     * size	Number	Total volume of orders with the specified price
-     * price	Number	Price level
-     *
-     * ```
-     */
     public static String requestOrderbook(List<String> symbols, int limit) throws Exception {
         GateUtils.checkParamNotEmpty(symbols, "symbols");
         if (limit < 0) {
@@ -166,13 +77,19 @@ public class HitbtcCommunicator extends AbstractStockCommunicator {
             paramsBuilder.addParamIfNotEmpty("timeInForce", "GTC");
         }
 
-        return requestPostWithAuthorization("/api/2/order", paramsBuilder.build());
+        return requestPostWithAuthorization(ENDPOINT_ORDER, paramsBuilder.build());
+    }
+
+    public static String requestCheckOrderStatus(String orderId) throws Exception {
+        GateUtils.checkParamNotEmpty(orderId, "orderId");
+
+        return requestWithAuthorization(ENDPOINT_ORDER + "/" + orderId);
     }
 
     public static String requestCancelOrder(String orderId) throws Exception {
         GateUtils.checkParamNotEmpty(orderId, "orderId");
 
-        String urlString = HOST + "/api/2/order/" + orderId;
+        String urlString = HOST + ENDPOINT_ORDER + "/" + orderId;
         Map<String,String> headers = new HashMap<>();
         headers.put("Authorization", AUTH_HEADER_VALUE);
         return HttpsCommunicator.executeHttpsRequest(urlString, headers, "DELETE", null);

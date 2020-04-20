@@ -39,6 +39,10 @@ public class HitbtcCommunicatorTest {
         Assertions.assertTrue(resp.contains("\"status\":\"new\""));
         String orderId = resp.substring(resp.indexOf("\"clientOrderId\":\"")+"\"clientOrderId\":\"".length(), resp.indexOf("\","));
 
+        resp = HitbtcCommunicator.requestCheckOrderStatus(orderId);
+        System.out.println(resp);
+        Assertions.assertTrue(resp.contains("\"status\":\"new\""));
+
         resp = HitbtcCommunicator.requestCancelOrder(orderId);
         System.out.println(resp);
         Assertions.assertTrue(resp.contains("\"status\":\"canceled\""));
