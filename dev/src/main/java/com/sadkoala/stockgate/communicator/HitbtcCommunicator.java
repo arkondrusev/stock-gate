@@ -169,6 +169,15 @@ public class HitbtcCommunicator extends AbstractStockCommunicator {
         return requestPostWithAuthorization("/api/2/order", paramsBuilder.build());
     }
 
+    public static String requestCancelOrder(String orderId) throws Exception {
+        GateUtils.checkParamNotEmpty(orderId, "orderId");
+
+        String urlString = HOST + "/api/2/order/" + orderId;
+        Map<String,String> headers = new HashMap<>();
+        headers.put("Authorization", AUTH_HEADER_VALUE);
+        return HttpsCommunicator.executeHttpsRequest(urlString, headers, "DELETE", null);
+    }
+
     private static String requestWithAuthorization(final String endpoint, final String requestParams) throws Exception {
         GateUtils.checkParamNotEmpty(endpoint, "endpoint");
         GateUtils.checkParamNotNull(requestParams, "requestParams");

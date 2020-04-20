@@ -2,6 +2,7 @@ package com.sadkoala.stockgate.communicator;
 
 import com.sadkoala.stockgate.adapter.HitbtcAdapter;
 import com.sadkoala.stockgate.parser.model.Orderbook;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -35,6 +36,12 @@ public class HitbtcCommunicatorTest {
         String resp = HitbtcCommunicator.requestNewOrder(BTC_USD_SYMBOL, "buy", "limit", new BigDecimal("0.002"),
                 orderbook.getBid().getList().get(0).getPrice().subtract(new BigDecimal("1000")));
         System.out.println(resp);
+        Assertions.assertTrue(resp.contains("\"status\":\"new\""));
+        String orderId = resp.substring(resp.indexOf("\"clientOrderId\":\"")+"\"clientOrderId\":\"".length(), resp.indexOf("\","));
+
+        resp = HitbtcCommunicator.requestCancelOrder(orderId);
+        System.out.println(resp);
+        Assertions.assertTrue(resp.contains("\"status\":\"canceled\""));
     }
 
 }
