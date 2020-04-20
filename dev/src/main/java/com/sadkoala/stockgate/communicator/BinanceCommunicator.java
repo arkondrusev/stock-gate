@@ -108,7 +108,7 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
         String urlString = HOST + ENDPOINT_ORDER + "?" + signParams(paramsBuilder.build());
         Map<String,String> headers = new HashMap<>();
         headers.put(HEADER_MBX_APIKEY, API_KEY_VALUE);
-        return HttpsCommunicator.executeHttpsRequest(urlString, headers, "DELETE", null);
+        return HttpsCommunicator.executeHttpsRequest(urlString, headers, "DELETE", EMPTY_STRING);
     }
 
     private static String prepareCommonParams() {

@@ -3,6 +3,7 @@ package com.sadkoala.stockgate.communicator;
 import com.sadkoala.httpscommunicator.HttpsCommunicator;
 import com.sadkoala.stockgate.GateUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -147,6 +148,27 @@ public class HitbtcCommunicator extends AbstractStockCommunicator {
         return requestOrderbook(symbols, limit);
     }
 
+    public static String requestNewOrder(String symbol, String side, String type, BigDecimal qty, BigDecimal price) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(side, "side");
+        GateUtils.checkParamNotEmpty(type, "type");
+        // validate type market or limit
+        GateUtils.checkParamNotNull(qty, "qty");
+
+        URLParamsBuilder paramsBuilder = URLParamsBuilder.newBuilder();
+        paramsBuilder.addParamIfNotEmpty("symbol", symbol)
+                .addParamIfNotEmpty("side", side)
+                .addParamIfNotEmpty("type", type)
+                .addParamIfNotEmpty("quantity", qty.toPlainString());
+        if ("limit".equals(type)) {
+            GateUtils.checkParamNotNull(price, "price");
+            paramsBuilder.addParamIfNotEmpty("price", price.toPlainString());
+            paramsBuilder.addParamIfNotEmpty("timeInForce", "GTC");
+        }
+
+        return requestPostWithAuthorization("/api/2/order", paramsBuilder.build());
+    }
+
     private static String requestWithAuthorization(final String endpoint, final String requestParams) throws Exception {
         GateUtils.checkParamNotEmpty(endpoint, "endpoint");
         GateUtils.checkParamNotNull(requestParams, "requestParams");
@@ -165,6 +187,12 @@ public class HitbtcCommunicator extends AbstractStockCommunicator {
         GateUtils.checkParamNotEmpty(endpoint, "endpoint");
 
         return requestWithAuthorization(endpoint, EMPTY_STRING);
+    }
+
+    private static String requestPostWithAuthorization(final String endpoint, final String requestParams) throws Exception {
+        Map<String,String> headers = new HashMap<>();
+        headers.put("Authorization", AUTH_HEADER_VALUE);
+        return HttpsCommunicator.executePostRequest(HOST + endpoint, requestParams, headers);
     }
 
 }
