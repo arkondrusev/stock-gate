@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HitbtcParser extends AbstractStockParser {
 
@@ -19,13 +21,7 @@ public class HitbtcParser extends AbstractStockParser {
     public static List<Order> parseOpenOrders(final String jsonString) throws IOException {
         List<Order> parsedOrders = new ArrayList<>();
         for (JsonNode order : mapper.readTree(jsonString)) {
-            parsedOrders.add(new Order("hitbtc",
-                    order.get("symbol").asText(),
-                    order.get("clientOrderId").asText(),
-                    new BigDecimal(order.get("price").asText()),
-                    new BigDecimal(order.get("quantity").asText()),
-                    order.get("status").asText(),
-                    hitbtcTimeDateToMilliseconds(order.get("createdAt").asText())));
+            parsedOrders.add(parseOrder(order));
         }
         return parsedOrders;
     }
@@ -76,6 +72,46 @@ public class HitbtcParser extends AbstractStockParser {
 
     public static List<OrderbookEntry> parseOrderbookBid(String jsonString, String symbol, int limit) throws IOException {
         return parseOrderBookByBookType(jsonString, symbol, "bid", limit);
+    }
+
+    /**
+     * {"id":234887577810,"clientOrderId":"ca1bb82fb2e72674e82b3bfb0ea5a9d0","symbol":"BTCUSD","side":"buy","status":"new","type":"limit","timeInForce":"GTC","price":"5820.38","quantity":"0.00200","postOnly":false,"cumQuantity":"0","createdAt":"2020-04-21T12:10:26.117Z","updatedAt":"2020-04-21T12:10:26.117Z"}
+     */
+    public static Order parseCreateOrderResponse(String jsonString) throws IOException {
+        return parseOrder(mapper.readTree(jsonString));
+    }
+
+    /**
+     * {"id":234887577810,"clientOrderId":"ca1bb82fb2e72674e82b3bfb0ea5a9d0","symbol":"BTCUSD","side":"buy","status":"new","type":"limit","timeInForce":"GTC","price":"5820.38","quantity":"0.00200","postOnly":false,"cumQuantity":"0","createdAt":"2020-04-21T12:10:26.117Z","updatedAt":"2020-04-21T12:10:26.117Z"}
+     */
+    public static String parseCheckOrderStatusResponse(String jsonString) {
+        return parseStatus(jsonString);
+    }
+
+    /**
+     * {"id":234887577810,"clientOrderId":"ca1bb82fb2e72674e82b3bfb0ea5a9d0","symbol":"BTCUSD","side":"buy","status":"canceled","type":"limit","timeInForce":"GTC","price":"5820.38","quantity":"0.00200","postOnly":false,"cumQuantity":"0","createdAt":"2020-04-21T12:10:26.117Z","updatedAt":"2020-04-21T12:10:26.404Z"}
+     */
+    public static String parseCancelOrderResponse(String jsonString) {
+        return parseStatus(jsonString);
+    }
+
+    private static String parseStatus(String inputString) {
+        Pattern pattern = Pattern.compile("\"status\":\"([a-z]+)\",");
+        Matcher matcher = pattern.matcher(inputString);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
+    }
+
+    private static Order parseOrder(JsonNode orderNode) {
+        return new Order("hitbtc",
+                orderNode.get("symbol").asText(),
+                orderNode.get("clientOrderId").asText(),
+                new BigDecimal(orderNode.get("price").asText()),
+                new BigDecimal(orderNode.get("quantity").asText()),
+                orderNode.get("status").asText(),
+                hitbtcTimeDateToMilliseconds(orderNode.get("createdAt").asText()));
     }
 
 }
