@@ -31,4 +31,33 @@ public class HitbtcAdapter extends AbstractStockAdapter {
                 HitbtcParser.parseOrderbookBid(jsonOrderbook, symbol, limit));
     }
 
+    public static Order placeMarketOrder(String symbol, String side, BigDecimal qty) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(side, "side");
+        GateUtils.checkParamNotNull(qty, "qty");
+
+        return HitbtcParser.parseCreateOrderResponse(HitbtcCommunicator.requestNewOrder(symbol, side, "market", qty, null));
+    }
+
+    public static Order placeLimitOrder(String symbol, String side, BigDecimal qty, BigDecimal price) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(side, "side");
+        GateUtils.checkParamNotNull(qty, "qty");
+        GateUtils.checkParamNotNull(price, "price");
+
+        return HitbtcParser.parseCreateOrderResponse(HitbtcCommunicator.requestNewOrder(symbol, side, "limit", qty, price));
+    }
+
+    public static String checkOrderStatus(String orderId) throws Exception {
+        GateUtils.checkParamNotEmpty(orderId, "orderId");
+
+        return HitbtcParser.parseCheckOrderStatusResponse(HitbtcCommunicator.requestCheckOrderStatus(orderId));
+    }
+
+    public static String cancelOrder(String orderId) throws Exception {
+        GateUtils.checkParamNotEmpty(orderId, "orderId");
+
+        return HitbtcParser.parseCancelOrderResponse(HitbtcCommunicator.requestCancelOrder(orderId));
+    }
+
 }
