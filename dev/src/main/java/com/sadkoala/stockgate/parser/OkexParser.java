@@ -21,13 +21,7 @@ public class OkexParser extends AbstractStockParser {
     public static List<Order> parseOpenOrders(final String jsonString) throws IOException {
         List<Order> parsedOrders = new ArrayList<>();
         for (JsonNode order : mapper.readTree(jsonString)) {
-            parsedOrders.add(new Order("okex",
-                    order.get("instrument_id").asText(),
-                    order.get("order_id").asText(),
-                    new BigDecimal(order.get("price").asText()),
-                    new BigDecimal(order.get("size").asText()),
-                    order.get("status").asText(),
-                    null));
+            parsedOrders.add(parseOrder(order));
         }
         return parsedOrders;
     }
@@ -119,7 +113,8 @@ public class OkexParser extends AbstractStockParser {
                 new BigDecimal(orderNode.get("price").asText()),
                 new BigDecimal(orderNode.get("size").asText()),
                 orderNode.get("status").asText(),
-                null);
+                null,
+                orderNode.get("side").asText());
     }
 
 }

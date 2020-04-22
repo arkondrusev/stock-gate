@@ -109,7 +109,8 @@ public class BinanceParser extends AbstractStockParser {
                 new BigDecimal(orderNode.get("price").asText()),
                 new BigDecimal(orderNode.get("origQty").asText()),
                 orderNode.get("status").asText(),
-                orderNode.get(createTimeNodeName).asLong());
+                orderNode.get(createTimeNodeName).asLong(),
+                orderNode.get("side").asText());
     }
 
 }

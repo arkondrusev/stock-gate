@@ -111,7 +111,8 @@ public class HitbtcParser extends AbstractStockParser {
                 new BigDecimal(orderNode.get("price").asText()),
                 new BigDecimal(orderNode.get("quantity").asText()),
                 orderNode.get("status").asText(),
-                hitbtcTimeDateToMilliseconds(orderNode.get("createdAt").asText()));
+                hitbtcTimeDateToMilliseconds(orderNode.get("createdAt").asText()),
+                orderNode.get("side").asText());
     }
 
 }
