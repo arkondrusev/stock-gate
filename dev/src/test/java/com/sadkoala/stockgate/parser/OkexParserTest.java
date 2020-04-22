@@ -30,4 +30,22 @@ public class OkexParserTest {
         System.out.println("order book size = " + OkexParser.parseOrderbookAsk(jsonResponse,   1).size());
     }
 
+    @Test
+    public void testParseCreateNewOrderResponse() throws IOException {
+        String jsonString = "{\"client_oid\":\"\",\"code\":\"0\",\"error_code\":\"0\",\"error_message\":\"\",\"message\":\"\",\"order_id\":\"4771850469064704\",\"result\":true}";
+        System.out.println("order id : " + OkexParser.parseCreateOrderResponse(jsonString));
+    }
+
+    @Test
+    public void testParseCheckOrderStatusResponse() throws IOException {
+        String jsonString = "{\"client_oid\":\"\",\"created_at\":\"2020-04-22T09:44:19.746Z\",\"filled_notional\":\"0\",\"filled_size\":\"0\",\"funds\":\"\",\"instrument_id\":\"BTC-USDT\",\"notional\":\"\",\"order_id\":\"4771850469064704\",\"order_type\":\"0\",\"price\":\"5948.4\",\"price_avg\":\"0\",\"product_id\":\"BTC-USDT\",\"side\":\"buy\",\"size\":\"0.002\",\"state\":\"0\",\"status\":\"open\",\"timestamp\":\"2020-04-22T09:44:19.746Z\",\"type\":\"limit\"}\n";
+        System.out.println("order status : " + OkexParser.parseCheckOrderStatusResponse(jsonString).getStatus());
+    }
+
+    @Test
+    public void testParseCancelOrderResponse() {
+        String jsonString = "{\"client_oid\":\"\",\"code\":\"0\",\"error_code\":\"0\",\"error_message\":\"\",\"message\":\"\",\"order_id\":\"4771850469064704\",\"result\":true}";
+        System.out.println("result : " + OkexParser.parseCancelOrderResponse(jsonString));
+    }
+
 }

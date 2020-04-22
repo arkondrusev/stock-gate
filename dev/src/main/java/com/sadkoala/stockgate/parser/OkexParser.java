@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class OkexParser extends AbstractStockParser {
 
@@ -69,6 +71,55 @@ public class OkexParser extends AbstractStockParser {
 
     public static List<OrderbookEntry> parseOrderbookBid(String jsonString, Integer limit) throws IOException {
         return parseOrderbook(jsonString,"bids", limit);
+    }
+
+    /**
+     * {"client_oid":"","code":"0","error_code":"0","error_message":"","message":"","order_id":"4771850469064704","result":true}
+     */
+    public static String parseCreateOrderResponse(String jsonString) throws IOException {
+        return parseOrderId(jsonString);
+    }
+
+    /**
+     * {"client_oid":"","created_at":"2020-04-22T09:44:19.746Z","filled_notional":"0","filled_size":"0","funds":"","instrument_id":"BTC-USDT","notional":"","order_id":"4771850469064704","order_type":"0","price":"5948.4","price_avg":"0","product_id":"BTC-USDT","side":"buy","size":"0.002","state":"0","status":"open","timestamp":"2020-04-22T09:44:19.746Z","type":"limit"}
+     */
+    public static Order parseCheckOrderStatusResponse(String jsonString) throws IOException {
+        return parseOrder(mapper.readTree(jsonString));
+    }
+
+    /**
+     * {"client_oid":"","code":"0","error_code":"0","error_message":"","message":"","order_id":"4771850469064704","result":true}
+     */
+    public static String parseCancelOrderResponse(String jsonString) {
+        return parseResult(jsonString);
+    }
+
+    private static String parseOrderId(String inputString) {
+        Pattern pattern = Pattern.compile("\"order_id\":\"(\\d+)\",");
+        Matcher matcher = pattern.matcher(inputString);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
+    }
+
+    private static String parseResult(String inputString) {
+        Pattern pattern = Pattern.compile("\"result\":(\\w+)}");
+        Matcher matcher = pattern.matcher(inputString);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
+    }
+
+    private static Order parseOrder(JsonNode orderNode) {
+        return new Order("okex",
+                orderNode.get("instrument_id").asText(),
+                orderNode.get("order_id").asText(),
+                new BigDecimal(orderNode.get("price").asText()),
+                new BigDecimal(orderNode.get("size").asText()),
+                orderNode.get("status").asText(),
+                null);
     }
 
 }
