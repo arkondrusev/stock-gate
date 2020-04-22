@@ -31,4 +31,35 @@ public class OkexAdapter {
                 OkexParser.parseOrderbookBid(jsonOrderbook, null));
     }
 
+    public static String placeMarketOrder(String symbol, String side, BigDecimal qty) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(side, "side");
+        GateUtils.checkParamNotNull(qty, "qty");
+
+        return OkexParser.parseCreateOrderResponse(OkexCommunicator.requestNewOrder(symbol, side, "market", qty, null));
+    }
+
+    public static String placeLimitOrder(String symbol, String side, BigDecimal qty, BigDecimal price) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(side, "side");
+        GateUtils.checkParamNotNull(qty, "qty");
+        GateUtils.checkParamNotNull(price, "price");
+
+        return OkexParser.parseCreateOrderResponse(OkexCommunicator.requestNewOrder(symbol, side, "limit", qty, price));
+    }
+
+    public static Order checkOrderStatus(String symbol, String orderId) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(orderId, "orderId");
+
+        return OkexParser.parseCheckOrderStatusResponse(OkexCommunicator.requestCheckOrderStatus(symbol, orderId));
+    }
+
+    public static String cancelOrder(String symbol, String orderId) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(orderId, "orderId");
+
+        return OkexParser.parseCancelOrderResponse(OkexCommunicator.requestCancelOrder(symbol, orderId));
+    }
+
 }
