@@ -1,6 +1,7 @@
 package com.sadkoala.stockgate.communicator;
 
 import com.sadkoala.stockgate.adapter.OkexAdapter;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -33,22 +34,16 @@ public class OkexCommunicatorTest {
 
         String resp = OkexCommunicator.requestNewOrder(BTC_USDT_SYMBOL, "buy", "limit", new BigDecimal("0.002"), btcPrice.subtract(new BigDecimal("1000")));
         System.out.println(resp);
-//        Assertions.assertTrue(resp.contains("\"status\":\"NEW\""));
-//        String orderId = resp.substring(resp.indexOf("\"clientOrderId\":\"")+"\"clientOrderId\":\"".length(),resp.indexOf("\",\"transactTime\""));
+        Assertions.assertTrue(resp.contains("\"result\":true"));
+        String orderId = resp.substring(resp.indexOf("\"order_id\":\"")+"\"order_id\":\"".length(),resp.indexOf("\",\"result\""));
 
-//        resp = BinanceCommunicator.requestCheckOrderStatus(BTC_USDT_SYMBOL, orderId);
-//        System.out.println(resp);
-//        Assertions.assertTrue(resp.contains("\"status\":\"NEW\""));
+        resp = OkexCommunicator.requestCheckOrderStatus(BTC_USDT_SYMBOL, orderId);
+        System.out.println(resp);
+        Assertions.assertTrue(resp.contains("\"status\":\"open\""));
 
-
-//        resp = BinanceCommunicator.requestCancelOrder(BTC_USDT_SYMBOL, orderId);
-//        System.out.println(resp);
-//        Assertions.assertTrue(resp.contains("\"status\":\"CANCELED\""));
+        resp = OkexCommunicator.requestCancelOrder(BTC_USDT_SYMBOL, orderId);
+        System.out.println(resp);
+        Assertions.assertTrue(resp.contains("\"result\":true"));
     }
-
-//    @Test
-//    public void testMakeContent() throws JsonProcessingException {
-//        System.out.println(OkexCommunicator.makeNewOrderRequestContent(BTC_USDT_SYMBOL, "buy", "limit", "0.002", "7000"));
-//    }
 
 }

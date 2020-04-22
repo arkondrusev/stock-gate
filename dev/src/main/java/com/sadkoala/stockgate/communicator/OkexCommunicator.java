@@ -21,6 +21,8 @@ public class OkexCommunicator extends AbstractStockCommunicator {
 
     private static final String HOST = "www.okex.com";
 
+    private static final String ENDPOINT_ORDERS = "/api/spot/v3/orders";
+
     private static ObjectMapper mapper = new ObjectMapper();
 
     public static String requestOpenOrders(String symbol) throws Exception {
@@ -51,8 +53,29 @@ public class OkexCommunicator extends AbstractStockCommunicator {
         GateUtils.checkParamNotEmpty(type, "type");
         GateUtils.checkParamNotNull(qty, "qty");
 
-        return requestPostWithAuthorization("/api/spot/v3/orders",
+        return requestPostWithAuthorization(ENDPOINT_ORDERS,
                 makeNewOrderRequestContent(symbol, side, type, qty.toPlainString(), price.toPlainString()));
+    }
+
+    public static String requestCheckOrderStatus(final String symbol, final String orderId) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(orderId, "orderId");
+
+        return requestWithAuthorization(ENDPOINT_ORDERS + "/" + orderId, "instrument_id=" + symbol);
+    }
+
+    public static String requestCancelOrder(final String symbol, final String orderId) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(orderId, "orderId");
+
+        return requestPostWithAuthorization("/api/spot/v3/cancel_orders" + "/" + orderId, makeCancelOrderRequestContent(symbol));
+    }
+
+    private static String makeCancelOrderRequestContent(final String symbol) throws JsonProcessingException {
+        ObjectNode root = mapper.createObjectNode();
+        root.put("instrument_id", symbol);
+
+        return mapper.writeValueAsString(root);
     }
 
     private static String makeNewOrderRequestContent(final String symbol, final String side, final String type, final String qty, final String price) throws JsonProcessingException {
@@ -82,15 +105,8 @@ public class OkexCommunicator extends AbstractStockCommunicator {
         if (!params.isBlank()) {
             requestPath = requestPath + "?" + params;
         }
-        String timestamp = getUnixTime();
-        Map<String,String> headers = new HashMap<>();
-//        headers.put("Content-Type", "application/json; charset=UTF-8");
-//        headers.put("Accept", "application/json");
-        headers.put("OK-ACCESS-KEY", API_KEY_VALUE);
-        headers.put("OK-ACCESS-SIGN", makeSign(timestamp + "GET" + requestPath));
-        headers.put("OK-ACCESS-TIMESTAMP", timestamp);
-        headers.put("OK-ACCESS-PASSPHRASE", PASSPHRASE_VALUE);
-        return HttpsCommunicator.executeGetRequest(HOST + requestPath, headers);
+        return HttpsCommunicator.executeGetRequest(HOST + requestPath,
+                makeAuthHeaders("GET", requestPath, EMPTY_STRING));
     }
 
     private static String requestWithAuthorization(final String endpoint) throws Exception {
@@ -103,15 +119,21 @@ public class OkexCommunicator extends AbstractStockCommunicator {
         GateUtils.checkParamNotEmpty(endpoint, "endpoint");
         GateUtils.checkParamNotNull(requestContent, "requestContent");
 
-        String timestamp = getUnixTime();
-        Map<String,String> headers = new HashMap<>();
+        Map<String,String> headers = makeAuthHeaders("POST", endpoint, requestContent == null ? EMPTY_STRING : requestContent);
         headers.put("Content-Type", "application/json; charset=UTF-8");
         headers.put("Accept", "application/json");
+        return HttpsCommunicator.executePostRequest(HOST + endpoint, requestContent, headers);
+    }
+
+    private static Map<String, String> makeAuthHeaders(String httpMethod, String endpoint, String requestContent) throws NoSuchAlgorithmException, InvalidKeyException {
+        String timestamp = getUnixTime();
+        Map<String,String> headers = new HashMap<>();
         headers.put("OK-ACCESS-KEY", API_KEY_VALUE);
-        headers.put("OK-ACCESS-SIGN", makeSign(timestamp + "POST" + endpoint + requestContent));
+        headers.put("OK-ACCESS-SIGN", makeSign(timestamp + httpMethod + endpoint + requestContent));
         headers.put("OK-ACCESS-TIMESTAMP", timestamp);
         headers.put("OK-ACCESS-PASSPHRASE", PASSPHRASE_VALUE);
-        return HttpsCommunicator.executePostRequest(HOST + endpoint, requestContent, headers);
+
+        return headers;
     }
 
     private static String makeSign(String textToSign) throws InvalidKeyException, NoSuchAlgorithmException {
