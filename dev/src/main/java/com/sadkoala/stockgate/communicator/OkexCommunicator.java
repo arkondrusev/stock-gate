@@ -54,7 +54,8 @@ public class OkexCommunicator extends AbstractStockCommunicator {
         GateUtils.checkParamNotNull(qty, "qty");
 
         return requestPostWithAuthorization(ENDPOINT_ORDERS,
-                makeNewOrderRequestContent(symbol, side, type, qty.toPlainString(), price.toPlainString()));
+                makeNewOrderRequestContent(symbol, side, type, qty.toPlainString(),
+                        price != null ? price.toPlainString() : null));
     }
 
     public static String requestCheckOrderStatus(final String symbol, final String orderId) throws Exception {

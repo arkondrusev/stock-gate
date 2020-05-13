@@ -7,8 +7,12 @@ import java.util.List;
 
 public interface IStockAdapter {
 
+    String getStockName();
+
     List<Order> getOpenOrders(String symbol) throws Exception;
 
     void placeMarketOrder(String symbol, String side, BigDecimal qty) throws Exception;
+
+    String cancelOrder(String symbol, String orderId) throws Exception;
 
 }

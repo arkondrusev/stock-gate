@@ -9,6 +9,11 @@ import java.util.List;
 public class BinanceStockAdapter implements IStockAdapter {
 
     @Override
+    public String getStockName() {
+        return "Binance";
+    }
+
+    @Override
     public List<Order> getOpenOrders(String symbol) throws Exception {
         return BinanceAdapter.getOpenOrders(symbol);
     }
@@ -16,6 +21,11 @@ public class BinanceStockAdapter implements IStockAdapter {
     @Override
     public void placeMarketOrder(String symbol, String side, BigDecimal qty) throws Exception {
         BinanceAdapter.placeMarketOrder(symbol, side, qty);
+    }
+
+    @Override
+    public String cancelOrder(String symbol, String orderId) throws Exception {
+        return BinanceAdapter.cancelOrder(symbol, orderId);
     }
 
 }
