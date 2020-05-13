@@ -49,4 +49,9 @@ public class BinanceCommunicatorTest {
         Assertions.assertTrue(resp.contains("\"status\":\"CANCELED\""));
     }
 
+    @Test
+    public void testRequestTradeList() throws Exception {
+        //BinanceCommunicator.requestTradeList();
+    }
+
 }

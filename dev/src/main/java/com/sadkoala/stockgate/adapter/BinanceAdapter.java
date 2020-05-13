@@ -3,7 +3,8 @@ package com.sadkoala.stockgate.adapter;
 import com.sadkoala.stockgate.GateUtils;
 import com.sadkoala.stockgate.communicator.BinanceCommunicator;
 import com.sadkoala.stockgate.parser.BinanceParser;
-import com.sadkoala.stockgate.parser.model.*;
+import com.sadkoala.stockgate.parser.model.Order;
+import com.sadkoala.stockgate.parser.model.Orderbook;
 
 import java.math.BigDecimal;
 import java.util.List;

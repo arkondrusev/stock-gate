@@ -9,7 +9,7 @@ import com.sadkoala.stockgate.parser.model.Orderbook;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class OkexAdapter {
+public class OkexAdapter extends AbstractStockAdapter {
 
     public static List<Order> getOpenOrders(String symbol) throws Exception {
         GateUtils.checkParamNotEmpty(symbol, "symbol");

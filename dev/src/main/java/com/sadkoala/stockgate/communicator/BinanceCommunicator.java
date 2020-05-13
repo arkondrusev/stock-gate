@@ -111,6 +111,17 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
         return HttpsCommunicator.executeHttpsRequest(urlString, headers, "DELETE", EMPTY_STRING);
     }
 
+    public static String requestTradeList(String symbol, String startTime, String endTime) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+
+        URLParamsBuilder paramsBuilder = URLParamsBuilder.newBuilder();
+        paramsBuilder.addParamIfNotEmpty(REQUEST_PARAM_SYMBOL, symbol);
+        paramsBuilder.addParamIfNotEmpty("startTime", startTime);
+        paramsBuilder.addParamIfNotEmpty("endTime", endTime);
+
+        return requestGetWithAuthorization("/api/v3/myTrades", paramsBuilder.build());
+    }
+
     private static String prepareCommonParams() {
         URLParamsBuilder paramsBuilder = URLParamsBuilder.newBuilder();
         addCommonParams(paramsBuilder);
