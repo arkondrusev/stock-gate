@@ -102,6 +102,7 @@ public class BinanceParser extends AbstractStockParser {
         return null;
     }
 
+
     private static Order parseOrder(JsonNode orderNode, String createTimeNodeName) {
         return new Order("binance",
                 orderNode.get("symbol").asText(),
@@ -110,7 +111,8 @@ public class BinanceParser extends AbstractStockParser {
                 new BigDecimal(orderNode.get("origQty").asText()),
                 orderNode.get("status").asText(),
                 orderNode.get(createTimeNodeName).asLong(),
-                orderNode.get("side").asText());
+                orderNode.get("side").asText(),
+                orderNode.get("type").asText());
     }
 
 }

@@ -114,7 +114,8 @@ public class OkexParser extends AbstractStockParser {
                 new BigDecimal(orderNode.get("size").asText()),
                 orderNode.get("status").asText(),
                 null,
-                orderNode.get("side").asText());
+                orderNode.get("side").asText(),
+                null);
     }
 
 }

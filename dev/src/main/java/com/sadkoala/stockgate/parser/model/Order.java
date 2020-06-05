@@ -12,8 +12,9 @@ public class Order {
     private String status;
     private Long createTime;
     private String side;
+    private String type;
 
-    public Order(String stock, String symbol, String orderId, BigDecimal price, BigDecimal qty, String status, Long createTime, String side) {
+    public Order(String stock, String symbol, String orderId, BigDecimal price, BigDecimal qty, String status, Long createTime, String side, String type) {
         this.stock = stock;
         this.symbol = symbol;
         this.orderId = orderId;
@@ -22,6 +23,7 @@ public class Order {
         this.status = status;
         this.createTime = createTime;
         this.side = side;
+        this.type = type;
     }
 
     public String getStock() {
@@ -55,4 +57,9 @@ public class Order {
     public String getSide() {
         return side;
     }
+
+    public String getType() {
+        return type;
+    }
+
 }
