@@ -23,6 +23,10 @@ public class OkexCommunicator extends AbstractStockCommunicator {
 
     private static final String ENDPOINT_ORDERS = "/api/spot/v3/orders";
 
+    private static final String PARAM_NAME_SYMBOL = "symbol";
+
+    private static final String REQUEST_PARAM_NAME_INSTRUMENT_ID = "instrument_id";
+
     private static ObjectMapper mapper = new ObjectMapper();
 
     public static String requestOpenOrders(String symbol) throws Exception {
@@ -31,12 +35,36 @@ public class OkexCommunicator extends AbstractStockCommunicator {
         return requestWithAuthorization("/api/spot/v3/orders_pending", "instrument_id=" + symbol);
     }
 
+    /**
+     * Получает список алгоритмических ордеров (не включает обычные ордера получаемые методом requestOpenOrders
+     *
+     * @param symbol - торговая пара.
+     * @param type - тип алгоритмического ордера. Возможные значения: trigger order, trail order, iceberg order, time-weighted average price (TWAP).
+     * @param status - статус ордера. Обязательный и взаимоисключающий с id параметр. Если указан id, Status должен быть null.
+     * @param id - идентификатор ордера. Обязательный и взаимоисключающий со Status параметр. Если указан Status, id должен быть null.
+     * @return Строка ответа сервера (JSON)
+     * @throws Exception
+     */
+    public static String requestAlgoOrders(final String symbol, final String type, final String status, final String id) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, PARAM_NAME_SYMBOL);
+        GateUtils.checkParamNotEmpty(type, "type");
+        GateUtils.checkOneParamNotEmpty(status, "status", id, "id");
+
+        URLParamsBuilder paramsBuilder = new URLParamsBuilder();
+        paramsBuilder.addParamIfNotEmpty(REQUEST_PARAM_NAME_INSTRUMENT_ID, symbol);
+        paramsBuilder.addParamIfNotEmpty("order_type", type);
+        paramsBuilder.addParamIfNotEmpty("status", status);
+        paramsBuilder.addParamIfNotEmpty("algo_ids", id);
+
+        return requestWithAuthorization("/api/spot/v3/algo", paramsBuilder.build());
+    }
+
     public static String requestBalances() throws Exception {
         return requestWithAuthorization("/api/spot/v3/accounts");
     }
 
     public static String requestOrderbook(final String symbol, final Integer limit, final Float depth) throws Exception {
-        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(symbol, PARAM_NAME_SYMBOL);
 
         return HttpsCommunicator.executeHttpsRequest(
                 buildRequestUrl(HOST,
@@ -48,7 +76,7 @@ public class OkexCommunicator extends AbstractStockCommunicator {
     }
 
     public static String requestNewOrder(final String symbol, final String side, final String type, final BigDecimal qty, final BigDecimal price) throws Exception {
-        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(symbol, PARAM_NAME_SYMBOL);
         GateUtils.checkParamNotEmpty(side, "side");
         GateUtils.checkParamNotEmpty(type, "type");
         GateUtils.checkParamNotNull(qty, "qty");
@@ -59,14 +87,14 @@ public class OkexCommunicator extends AbstractStockCommunicator {
     }
 
     public static String requestCheckOrderStatus(final String symbol, final String orderId) throws Exception {
-        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(symbol, PARAM_NAME_SYMBOL);
         GateUtils.checkParamNotEmpty(orderId, "orderId");
 
-        return requestWithAuthorization(ENDPOINT_ORDERS + "/" + orderId, "instrument_id=" + symbol);
+        return requestWithAuthorization(ENDPOINT_ORDERS + "/" + orderId, REQUEST_PARAM_NAME_INSTRUMENT_ID + "=" + symbol);
     }
 
     public static String requestCancelOrder(final String symbol, final String orderId) throws Exception {
-        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(symbol, PARAM_NAME_SYMBOL);
         GateUtils.checkParamNotEmpty(orderId, "orderId");
 
         return requestPostWithAuthorization("/api/spot/v3/cancel_orders" + "/" + orderId, makeCancelOrderRequestContent(symbol));
@@ -74,14 +102,14 @@ public class OkexCommunicator extends AbstractStockCommunicator {
 
     private static String makeCancelOrderRequestContent(final String symbol) throws JsonProcessingException {
         ObjectNode root = mapper.createObjectNode();
-        root.put("instrument_id", symbol);
+        root.put(REQUEST_PARAM_NAME_INSTRUMENT_ID, symbol);
 
         return mapper.writeValueAsString(root);
     }
 
     private static String makeNewOrderRequestContent(final String symbol, final String side, final String type, final String qty, final String price) throws JsonProcessingException {
         ObjectNode root = mapper.createObjectNode();
-        root.put("instrument_id", symbol);
+        root.put(REQUEST_PARAM_NAME_INSTRUMENT_ID, symbol);
         root.put("side", side);
         root.put("type", type);
         if ("limit".equals(type)) {

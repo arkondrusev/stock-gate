@@ -46,4 +46,10 @@ public class OkexCommunicatorTest {
         Assertions.assertTrue(resp.contains("\"result\":true"));
     }
 
+    @Test
+    public void testRequestAlgoOrders() throws Exception {
+        String orders = OkexCommunicator.requestAlgoOrders(BTC_USDT_SYMBOL, "trigger order", "Pending", null);
+        System.out.println(orders);
+    }
+
 }

@@ -38,4 +38,16 @@ public class GateUtils {
         throw new IllegalArgumentException("Parameter \"" + paramName + "\" is empty");
     }
 
+    public static void checkOneParamNotEmpty(String paramOne, String paramOneName, String paramTwo, String paramTwoName) {
+        // если оба параметра пустые или оба непустые выдаем ошибку
+        boolean paramOneEmpty = isParamEmpty(paramOne);
+        boolean paramTwoEmpty = isParamEmpty(paramTwo);
+        if (paramOneEmpty && paramTwoEmpty) {
+            throw new IllegalStateException("Both params \"" + paramOneName + "\" and \"" + paramTwoName + "\" are empty");
+        }
+        if (!(paramOneEmpty || paramTwoEmpty)) {
+            throw new IllegalStateException("Both params \"" + paramOneName + "\" and \"" + paramTwoName + "\" are not empty");
+        }
+    }
+
 }
