@@ -85,7 +85,7 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
         return requestPostWithAuthorization(ENDPOINT_ORDER, paramsBuilder.build());
     }
 
-    public static String requestCheckOrderStatus(String symbol, String orderId) throws Exception {
+    public static String requestOrder(String symbol, String orderId) throws Exception {
         GateUtils.checkParamNotEmpty(symbol, "symbol");
         GateUtils.checkParamNotEmpty(orderId, "orderId");
 

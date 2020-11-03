@@ -52,11 +52,18 @@ public class BinanceAdapter extends AbstractStockAdapter {
         return BinanceParser.parseCreateOrderResponse(BinanceCommunicator.requestNewOrder(symbol, side, "LIMIT", qty, price));
     }
 
-    public static String checkOrderStatus(String symbol, String orderId) throws Exception {
+    public static String getOrderStatus(String symbol, String orderId) throws Exception {
         GateUtils.checkParamNotEmpty(symbol, "symbol");
         GateUtils.checkParamNotEmpty(orderId, "orderId");
 
-        return BinanceParser.parseCheckOrderStatusResponse(BinanceCommunicator.requestCheckOrderStatus(symbol, orderId));
+        return BinanceParser.parseOrderStatusResponseToStatus(BinanceCommunicator.requestOrder(symbol, orderId));
+    }
+
+    public static Order getOrder(String symbol, String orderId) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(orderId, "orderId");
+
+        return BinanceParser.parseOrderStatusResponseToOrder(BinanceCommunicator.requestOrder(symbol, orderId));
     }
 
     public static String cancelOrder(String symbol, String orderId) throws Exception {

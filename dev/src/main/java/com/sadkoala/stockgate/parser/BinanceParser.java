@@ -82,7 +82,7 @@ public class BinanceParser extends AbstractStockParser {
     /**
      * {"symbol":"BTCUSDT","orderId":1876373751,"orderListId":-1,"clientOrderId":"Eqjda89LX2QUWNfbkwRMQR","price":"6122.09000000","origQty":"0.00200000","executedQty":"0.00000000","cummulativeQuoteQty":"0.00000000","status":"NEW","timeInForce":"GTC","type":"LIMIT","side":"BUY","stopPrice":"0.00000000","icebergQty":"0.00000000","time":1587313870739,"updateTime":1587313870739,"isWorking":true,"origQuoteOrderQty":"0.00000000"}
      */
-    public static String parseCheckOrderStatusResponse(String jsonString) {
+    public static String parseOrderStatusResponseToStatus(String jsonString) {
         return parseStatus(jsonString);
     }
 
@@ -102,7 +102,6 @@ public class BinanceParser extends AbstractStockParser {
         return null;
     }
 
-
     private static Order parseOrder(JsonNode orderNode, String createTimeNodeName) {
         Order order = new Order("binance",
                 orderNode.get("symbol").asText(),
@@ -114,11 +113,19 @@ public class BinanceParser extends AbstractStockParser {
                 orderNode.get("side").asText(),
                 orderNode.get("type").asText());
 
-        for (JsonNode entry : orderNode.get("fills")) {
-            order.addOrderFill(new BigDecimal(entry.get("price").asText()), new BigDecimal(entry.get("qty").asText()));
+
+        JsonNode fills = orderNode.get("fills");
+        if (fills != null) {
+            for (JsonNode entry : fills) {
+                order.addOrderFill(new BigDecimal(entry.get("price").asText()), new BigDecimal(entry.get("qty").asText()));
+            }
         }
 
         return order;
+    }
+
+    public static Order parseOrderStatusResponseToOrder(String jsonString) throws IOException {
+        return parseOrder(mapper.readTree(jsonString), "time");
     }
 
 }

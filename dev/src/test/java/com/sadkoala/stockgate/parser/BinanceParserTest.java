@@ -37,7 +37,7 @@ public class BinanceParserTest {
     @Test
     public void testParseCheckOrderStatusResponse() {
         String jsonString = "{\"symbol\":\"BTCUSDT\",\"orderId\":1876373751,\"orderListId\":-1,\"clientOrderId\":\"Eqjda89LX2QUWNfbkwRMQR\",\"price\":\"6122.09000000\",\"origQty\":\"0.00200000\",\"executedQty\":\"0.00000000\",\"cummulativeQuoteQty\":\"0.00000000\",\"status\":\"NEW\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"side\":\"BUY\",\"stopPrice\":\"0.00000000\",\"icebergQty\":\"0.00000000\",\"time\":1587313870739,\"updateTime\":1587313870739,\"isWorking\":true,\"origQuoteOrderQty\":\"0.00000000\"}\n";
-        System.out.println("order status : " + BinanceParser.parseCheckOrderStatusResponse(jsonString));
+        System.out.println("order status : " + BinanceParser.parseOrderStatusResponseToStatus(jsonString));
     }
 
     @Test

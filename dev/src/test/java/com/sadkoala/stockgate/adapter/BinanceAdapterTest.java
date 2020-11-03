@@ -38,16 +38,16 @@ public class BinanceAdapterTest {
     }
 
     @Test
-    public void testPlaceOrder_CheckOrderStatus_CancelOrder() throws Exception {
+    public void testPlaceOrder_GetOrder_CancelOrder() throws Exception {
         BigDecimal btcPrice = BinanceAdapter.getBtcPrice();
 
         Order order = BinanceAdapter.placeLimitOrder(BTC_USDT_SYMBOL, "BUY", new BigDecimal("0.002"), btcPrice.subtract(new BigDecimal("1000")));
         Assertions.assertTrue("NEW".equals(order.getStatus()));
 
-        String status = BinanceAdapter.checkOrderStatus(order.getSymbol(), order.getOrderId());
-        Assertions.assertTrue("NEW".equals(status));
+        order = BinanceAdapter.getOrder(order.getSymbol(), order.getOrderId());
+        Assertions.assertTrue("NEW".equals(order.getStatus()));
 
-        status = BinanceAdapter.cancelOrder(order.getSymbol(), order.getOrderId());
+        String status = BinanceAdapter.cancelOrder(order.getSymbol(), order.getOrderId());
         Assertions.assertTrue("CANCELED".equals(status));
     }
 

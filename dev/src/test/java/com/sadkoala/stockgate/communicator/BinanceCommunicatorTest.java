@@ -39,7 +39,7 @@ public class BinanceCommunicatorTest {
         Assertions.assertTrue(resp.contains("\"status\":\"NEW\""));
         String orderId = resp.substring(resp.indexOf("\"clientOrderId\":\"")+"\"clientOrderId\":\"".length(),resp.indexOf("\",\"transactTime\""));
 
-        resp = BinanceCommunicator.requestCheckOrderStatus(BTC_USDT_SYMBOL, orderId);
+        resp = BinanceCommunicator.requestOrder(BTC_USDT_SYMBOL, orderId);
         System.out.println(resp);
         Assertions.assertTrue(resp.contains("\"status\":\"NEW\""));
 
