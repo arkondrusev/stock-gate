@@ -113,6 +113,7 @@ public class HitbtcParser extends AbstractStockParser {
                 orderNode.get("status").asText(),
                 hitbtcTimeDateToMilliseconds(orderNode.get("createdAt").asText()),
                 orderNode.get("side").asText(),
+                null,
                 null);
     }
 

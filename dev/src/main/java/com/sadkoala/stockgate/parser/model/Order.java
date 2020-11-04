@@ -15,9 +15,10 @@ public class Order {
     private Long createTime;
     private String side;
     private String type;
+    private BigDecimal cummulativeQuoteQty;
     private Set<OrderFill> orderFills = new HashSet<>();
 
-    public Order(String stock, String symbol, String orderId, BigDecimal price, BigDecimal qty, String status, Long createTime, String side, String type) {
+    public Order(String stock, String symbol, String orderId, BigDecimal price, BigDecimal qty, String status, Long createTime, String side, String type, BigDecimal cummulativeQuoteQty) {
         this.stock = stock;
         this.symbol = symbol;
         this.orderId = orderId;
@@ -27,6 +28,7 @@ public class Order {
         this.createTime = createTime;
         this.side = side;
         this.type = type;
+        this.cummulativeQuoteQty = cummulativeQuoteQty;
     }
 
     public String getStock() {
@@ -72,4 +74,9 @@ public class Order {
     public Set<OrderFill> getOrderFills() {
         return orderFills;
     }
+
+    public BigDecimal getCummulativeQuoteQty() {
+        return cummulativeQuoteQty;
+    }
+
 }

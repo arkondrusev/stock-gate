@@ -115,6 +115,7 @@ public class OkexParser extends AbstractStockParser {
                 orderNode.get("status").asText(),
                 null,
                 orderNode.get("side").asText(),
+                null,
                 null);
     }
 

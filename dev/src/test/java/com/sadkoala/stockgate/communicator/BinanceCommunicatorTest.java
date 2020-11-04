@@ -54,4 +54,19 @@ public class BinanceCommunicatorTest {
         //BinanceCommunicator.requestTradeList();
     }
 
+    /*
+    @Test
+    public void test() throws Exception {
+        Order order = BinanceAdapter.placeLimitOrder(BTC_USDT_SYMBOL, "BUY", new BigDecimal("0.002"), new BigDecimal("14000"));
+        String resp = BinanceCommunicator.requestOrder(BTC_USDT_SYMBOL, order.getOrderId());
+        System.out.println(resp);
+    }
+
+    @Test
+    public void test1() throws Exception {
+        String resp = BinanceCommunicator.requestOrder(BTC_USDT_SYMBOL, "HUrheXcURrxxlWRgcxIkwT");
+        System.out.println(resp);
+    }
+    */
+
 }
