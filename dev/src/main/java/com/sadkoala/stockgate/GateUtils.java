@@ -1,12 +1,17 @@
 package com.sadkoala.stockgate;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 public class GateUtils {
 
     public static boolean isParamEmpty(String param) {
         return Objects.isNull(param) || param.isBlank();
+    }
+
+    public static boolean isParamEmpty(Collection param) {
+        return param == null || param.isEmpty();
     }
 
     public static void checkParamNotEmpty(String param, String paramName) {
@@ -48,6 +53,18 @@ public class GateUtils {
         if (!(paramOneEmpty || paramTwoEmpty)) {
             throw new IllegalStateException("Both params \"" + paramOneName + "\" and \"" + paramTwoName + "\" are not empty");
         }
+    }
+
+    public static String listToCommaSeparatedString(List<String> list) {
+        StringBuilder symbolsList = new StringBuilder();
+        int i = 0;
+        for (String symbol : list) {
+            symbolsList.append(symbol);
+            if (list.size()-1 > i) { // if current symbol not last
+                symbolsList.append(",");
+            }
+        }
+        return symbolsList.toString();
     }
 
 }

@@ -60,4 +60,8 @@ public class HitbtcAdapter extends AbstractStockAdapter {
         return HitbtcParser.parseCancelOrderResponse(HitbtcCommunicator.requestCancelOrder(orderId));
     }
 
+    public static BigDecimal getBtcPrice() throws Exception {
+        return null;
+    }
+
 }

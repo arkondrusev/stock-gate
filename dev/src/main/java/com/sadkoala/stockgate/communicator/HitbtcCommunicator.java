@@ -17,10 +17,10 @@ public class HitbtcCommunicator extends AbstractStockCommunicator {
     private static final String AUTH_HEADER_VALUE = "Basic "
             + toString(encodeBase64(toByteArr(PRIVATE_KEY_VALUE + ":" + SECRET_KEY_VALUE)));
 
-
     private static final String HOST = "api.hitbtc.com";
 
     private static final String ENDPOINT_ORDER = "/api/2/order";
+    private static final String ENDPOINT_TICKER = "/api/2/public/ticker";
 
     public static String requestOpenOrders(String symbol) throws Exception {
         GateUtils.checkParamNotEmpty(symbol, "symbol");
@@ -38,17 +38,8 @@ public class HitbtcCommunicator extends AbstractStockCommunicator {
             throw new IllegalArgumentException("Limit < 0");
         }
 
-        StringBuilder symbolsList = new StringBuilder();
-        int i = 0;
-        for (String symbol : symbols) {
-            symbolsList.append(symbol);
-            if (symbols.size()-1 > i) { // if current symbol not last
-                symbolsList.append(",");
-            }
-        }
-
         URLParamsBuilder urlBuilder = new URLParamsBuilder();
-        urlBuilder.addParamIfNotEmpty("symbols", symbolsList.toString());
+        urlBuilder.addParamIfNotEmpty("symbols", GateUtils.listToCommaSeparatedString(symbols));
         urlBuilder.addParamIfNotEmpty("limit", limit);
         return HttpsCommunicator.executeHttpsRequest(buildRequestUrl(HOST, "/api/2/public/orderbook", urlBuilder.build()));
     }
@@ -93,6 +84,16 @@ public class HitbtcCommunicator extends AbstractStockCommunicator {
         Map<String,String> headers = new HashMap<>();
         headers.put("Authorization", AUTH_HEADER_VALUE);
         return HttpsCommunicator.executeHttpsRequest(urlString, headers, "DELETE", null);
+    }
+
+    public static String requestSymbolsTickers(List<String> symbols) throws Exception {
+        if (!GateUtils.isParamEmpty(symbols)) {
+            URLParamsBuilder urlBuilder = new URLParamsBuilder();
+            urlBuilder.addParamIfNotEmpty("symbols", GateUtils.listToCommaSeparatedString(symbols));
+            return HttpsCommunicator.executeGetRequest(buildRequestUrl(HOST, ENDPOINT_TICKER, urlBuilder.build()));
+        } else {
+            return HttpsCommunicator.executeGetRequest(buildRequestUrl(HOST, ENDPOINT_TICKER, null));
+        }
     }
 
     private static String requestWithAuthorization(final String endpoint, final String requestParams) throws Exception {

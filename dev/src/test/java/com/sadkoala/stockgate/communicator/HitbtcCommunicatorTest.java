@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HitbtcCommunicatorTest {
 
@@ -46,6 +48,18 @@ public class HitbtcCommunicatorTest {
         resp = HitbtcCommunicator.requestCancelOrder(orderId);
         System.out.println(resp);
         Assertions.assertTrue(resp.contains("\"status\":\"canceled\""));
+    }
+
+    @Test
+    public void testSymbolsTickers() throws Exception {
+        System.out.println(HitbtcCommunicator.requestSymbolsTickers(null));
+
+        List<String> symbols = new ArrayList<>();
+        symbols.add(BTC_USD_SYMBOL);
+        System.out.println(HitbtcCommunicator.requestSymbolsTickers(symbols));
+
+        symbols.add("ETHBTC");
+        System.out.println(HitbtcCommunicator.requestSymbolsTickers(symbols));
     }
 
 }
