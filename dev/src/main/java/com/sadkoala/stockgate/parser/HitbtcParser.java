@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.sadkoala.stockgate.GateUtils;
 import com.sadkoala.stockgate.parser.model.Order;
 import com.sadkoala.stockgate.parser.model.OrderbookEntry;
+import com.sadkoala.stockgate.parser.model.Ticker;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -115,6 +116,22 @@ public class HitbtcParser extends AbstractStockParser {
                 orderNode.get("side").asText(),
                 null,
                 null);
+    }
+
+    /**
+     * [{"symbol":"BTCUSD","ask":"16028.30","bid":"16028.14","last":"16032.55","low":"15710.99","high":"16158.80","open":"15841.03","volume":"14329.62696","volumeQuote":"228724496.2662842","timestamp":"2020-11-15T10:15:40.197Z"},{"symbol":"ETHBTC","ask":"0.028598","bid":"0.028597","last":"0.028603","low":"0.028578","high":"0.029006","open":"0.028929","volume":"65300.1244","volumeQuote":"1879.8036890764","timestamp":"2020-11-15T10:15:40.190Z"}]
+     */
+    public static List<Ticker> parseTickers(String jsonString) throws IOException {
+        List<Ticker> tickers = new ArrayList<>();
+
+        JsonNode root = mapper.readTree(jsonString);
+        for (JsonNode entry : root) {
+            tickers.add(new Ticker(
+                    entry.get("symbol").asText(),
+                    new BigDecimal(entry.get("last").asText())));
+        }
+
+        return tickers;
     }
 
 }

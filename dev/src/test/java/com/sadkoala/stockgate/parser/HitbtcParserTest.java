@@ -1,6 +1,7 @@
 package com.sadkoala.stockgate.parser;
 
 import com.sadkoala.stockgate.parser.model.Order;
+import com.sadkoala.stockgate.parser.model.Ticker;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -46,6 +47,15 @@ public class HitbtcParserTest {
     public void testParseCancelOrderResponse() {
         String jsonString = "{\"id\":234887577810,\"clientOrderId\":\"ca1bb82fb2e72674e82b3bfb0ea5a9d0\",\"symbol\":\"BTCUSD\",\"side\":\"buy\",\"status\":\"canceled\",\"type\":\"limit\",\"timeInForce\":\"GTC\",\"price\":\"5820.38\",\"quantity\":\"0.00200\",\"postOnly\":false,\"cumQuantity\":\"0\",\"createdAt\":\"2020-04-21T12:10:26.117Z\",\"updatedAt\":\"2020-04-21T12:10:26.404Z\"}\n";
         System.out.println("order status : " + HitbtcParser.parseCancelOrderResponse(jsonString));
+    }
+
+    @Test
+    public void testParseTickers() throws IOException {
+        String jsonString = "[{\"symbol\":\"BTCUSD\",\"ask\":\"16028.30\",\"bid\":\"16028.14\",\"last\":\"16032.55\",\"low\":\"15710.99\",\"high\":\"16158.80\",\"open\":\"15841.03\",\"volume\":\"14329.62696\",\"volumeQuote\":\"228724496.2662842\",\"timestamp\":\"2020-11-15T10:15:40.197Z\"},{\"symbol\":\"ETHBTC\",\"ask\":\"0.028598\",\"bid\":\"0.028597\",\"last\":\"0.028603\",\"low\":\"0.028578\",\"high\":\"0.029006\",\"open\":\"0.028929\",\"volume\":\"65300.1244\",\"volumeQuote\":\"1879.8036890764\",\"timestamp\":\"2020-11-15T10:15:40.190Z\"}]\n";
+        List<Ticker> tickers = HitbtcParser.parseTickers(jsonString);
+        String btcusdtPrice = tickers.get(0).lastPrice.toPlainString();
+        System.out.println("BTCUSD last price : " + btcusdtPrice);
+        Assertions.assertEquals("16032.55", btcusdtPrice);
     }
 
 }
