@@ -7,6 +7,7 @@ import com.sadkoala.stockgate.parser.model.Order;
 import com.sadkoala.stockgate.parser.model.Orderbook;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class HitbtcAdapter extends AbstractStockAdapter {
@@ -60,8 +61,13 @@ public class HitbtcAdapter extends AbstractStockAdapter {
         return HitbtcParser.parseCancelOrderResponse(HitbtcCommunicator.requestCancelOrder(orderId));
     }
 
-    public static BigDecimal getBtcPrice() throws Exception {
-        return null;
+    public static BigDecimal getSymbolPrice(String symbol) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+
+        List<String> symbols = new ArrayList<>();
+        symbols.add(symbol);
+
+        return HitbtcParser.parseTickers(HitbtcCommunicator.requestSymbolsTickers(symbols)).get(0).lastPrice;
     }
 
 }

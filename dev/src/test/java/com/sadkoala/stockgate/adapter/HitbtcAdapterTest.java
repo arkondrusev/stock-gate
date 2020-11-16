@@ -45,4 +45,10 @@ public class HitbtcAdapterTest {
         Assertions.assertTrue("canceled".equals(status));
     }
 
+    @Test
+    public void testGetSymbolPrice() throws Exception {
+        BigDecimal price = HitbtcAdapter.getSymbolPrice(BTC_USD_SYMBOL);
+        System.out.println("btcusd price - " + price.toPlainString());
+    }
+
 }
