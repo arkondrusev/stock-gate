@@ -62,4 +62,11 @@ public class HitbtcCommunicatorTest {
         System.out.println(HitbtcCommunicator.requestSymbolsTickers(symbols));
     }
 
+    @Test
+    public void test() throws Exception {
+        String resp = HitbtcCommunicator.requestNewOrder(BTC_USD_SYMBOL, "buy", "market", new BigDecimal("0.002"),
+                null);
+        System.out.println(resp);
+    }
+
 }

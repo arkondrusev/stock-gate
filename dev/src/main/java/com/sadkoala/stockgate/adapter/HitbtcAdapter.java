@@ -37,7 +37,7 @@ public class HitbtcAdapter extends AbstractStockAdapter {
         GateUtils.checkParamNotEmpty(side, "side");
         GateUtils.checkParamNotNull(qty, "qty");
 
-        return HitbtcParser.parseCreateOrderResponse(HitbtcCommunicator.requestNewOrder(symbol, side, "market", qty, null));
+        return HitbtcParser.parseOrderResponse(HitbtcCommunicator.requestNewOrder(symbol, side, "market", qty, null));
     }
 
     public static Order placeLimitOrder(String symbol, String side, BigDecimal qty, BigDecimal price) throws Exception {
@@ -46,7 +46,7 @@ public class HitbtcAdapter extends AbstractStockAdapter {
         GateUtils.checkParamNotNull(qty, "qty");
         GateUtils.checkParamNotNull(price, "price");
 
-        return HitbtcParser.parseCreateOrderResponse(HitbtcCommunicator.requestNewOrder(symbol, side, "limit", qty, price));
+        return HitbtcParser.parseOrderResponse(HitbtcCommunicator.requestNewOrder(symbol, side, "limit", qty, price));
     }
 
     public static String checkOrderStatus(String orderId) throws Exception {
@@ -68,6 +68,12 @@ public class HitbtcAdapter extends AbstractStockAdapter {
         symbols.add(symbol);
 
         return HitbtcParser.parseTickers(HitbtcCommunicator.requestSymbolsTickers(symbols)).get(0).lastPrice;
+    }
+
+    public static Order getOrder(String orderId) throws Exception {
+        GateUtils.checkParamNotEmpty(orderId, "orderId");
+
+        return HitbtcParser.parseOrderResponse(HitbtcCommunicator.requestCheckOrderStatus(orderId));
     }
 
 }

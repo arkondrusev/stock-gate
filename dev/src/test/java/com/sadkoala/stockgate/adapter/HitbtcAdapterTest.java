@@ -38,6 +38,9 @@ public class HitbtcAdapterTest {
         Order order = HitbtcAdapter.placeLimitOrder(BTC_USD_SYMBOL, "buy", new BigDecimal("0.002"), btcPrice.subtract(new BigDecimal("1000")));
         Assertions.assertTrue("new".equals(order.getStatus()));
 
+        Order order1 = HitbtcAdapter.getOrder(order.getOrderId());
+        Assertions.assertTrue("new".equals(order1.getStatus()));
+
         String status = HitbtcAdapter.checkOrderStatus(order.getOrderId());
         Assertions.assertTrue("new".equals(status));
 

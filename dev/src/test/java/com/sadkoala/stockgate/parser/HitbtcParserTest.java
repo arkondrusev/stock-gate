@@ -34,7 +34,7 @@ public class HitbtcParserTest {
     @Test
     public void testParseCreateNewOrderResponse() throws IOException {
         String jsonString = "{\"id\":234887577810,\"clientOrderId\":\"ca1bb82fb2e72674e82b3bfb0ea5a9d0\",\"symbol\":\"BTCUSD\",\"side\":\"buy\",\"status\":\"new\",\"type\":\"limit\",\"timeInForce\":\"GTC\",\"price\":\"5820.38\",\"quantity\":\"0.00200\",\"postOnly\":false,\"cumQuantity\":\"0\",\"createdAt\":\"2020-04-21T12:10:26.117Z\",\"updatedAt\":\"2020-04-21T12:10:26.117Z\"}\n";
-        System.out.println("order status : " + HitbtcParser.parseCreateOrderResponse(jsonString).getStatus());
+        System.out.println("order status : " + HitbtcParser.parseOrderResponse(jsonString).getStatus());
     }
 
     @Test

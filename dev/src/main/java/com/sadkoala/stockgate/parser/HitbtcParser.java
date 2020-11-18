@@ -78,7 +78,7 @@ public class HitbtcParser extends AbstractStockParser {
     /**
      * {"id":234887577810,"clientOrderId":"ca1bb82fb2e72674e82b3bfb0ea5a9d0","symbol":"BTCUSD","side":"buy","status":"new","type":"limit","timeInForce":"GTC","price":"5820.38","quantity":"0.00200","postOnly":false,"cumQuantity":"0","createdAt":"2020-04-21T12:10:26.117Z","updatedAt":"2020-04-21T12:10:26.117Z"}
      */
-    public static Order parseCreateOrderResponse(String jsonString) throws IOException {
+    public static Order parseOrderResponse(String jsonString) throws IOException {
         return parseOrder(mapper.readTree(jsonString));
     }
 
