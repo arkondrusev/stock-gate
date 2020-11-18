@@ -106,16 +106,33 @@ public class HitbtcParser extends AbstractStockParser {
     }
 
     private static Order parseOrder(JsonNode orderNode) {
-        return new Order("hitbtc",
+        JsonNode priceNode = orderNode.get("price");
+        BigDecimal price = null;
+        if (priceNode != null) {
+            String priceStr = priceNode.asText();
+            if (priceStr != null && !priceStr.isBlank()) {
+                price = new BigDecimal(priceStr);
+            }
+        }
+        Order order = new Order("hitbtc",
                 orderNode.get("symbol").asText(),
                 orderNode.get("clientOrderId").asText(),
-                new BigDecimal(orderNode.get("price").asText()),
+                price,
                 new BigDecimal(orderNode.get("quantity").asText()),
                 orderNode.get("status").asText(),
                 hitbtcTimeDateToMilliseconds(orderNode.get("createdAt").asText()),
                 orderNode.get("side").asText(),
                 null,
                 null);
+
+        JsonNode tradesReport = orderNode.get("tradesReport");
+        if (tradesReport != null) {
+            for (JsonNode entry : tradesReport) {
+                order.addOrderFill(new BigDecimal(entry.get("price").asText()), new BigDecimal(entry.get("quantity").asText()));
+            }
+        }
+
+        return order;
     }
 
     /**
