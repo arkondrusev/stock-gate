@@ -1,6 +1,7 @@
 package com.sadkoala.stockgate.communicator;
 
 import com.sadkoala.stockgate.adapter.HitbtcAdapter;
+import com.sadkoala.stockgate.parser.model.Order;
 import com.sadkoala.stockgate.parser.model.Orderbook;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -63,10 +64,19 @@ public class HitbtcCommunicatorTest {
     }
 
     @Test
-    public void test() throws Exception {
-        String resp = HitbtcCommunicator.requestNewOrder(BTC_USD_SYMBOL, "buy", "market", new BigDecimal("0.002"),
-                null);
-        System.out.println(resp);
+    public void testRequestOrderHistory() throws Exception {
+        BigDecimal btcPrice = HitbtcAdapter.getSymbolPrice(BTC_USD_SYMBOL);
+
+        Order order = HitbtcAdapter.placeLimitOrder(BTC_USD_SYMBOL, "buy",
+                new BigDecimal("0.002"),
+                btcPrice.subtract(new BigDecimal("1000")));
+        System.out.println(order.getOrderId());
+        HitbtcAdapter.cancelOrder(order.getOrderId());
+
+        Thread.sleep(5000);
+
+        String resp = HitbtcCommunicator.requestOrderHistory(order.getOrderId());
+        Assertions.assertTrue(resp.contains(order.getOrderId()));
     }
 
 }

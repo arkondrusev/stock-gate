@@ -122,4 +122,9 @@ public class HitbtcCommunicator extends AbstractStockCommunicator {
         return HttpsCommunicator.executePostRequest(HOST + endpoint, requestParams, headers);
     }
 
+    public static String requestOrderHistory(final String clientOrderId) throws Exception {
+        GateUtils.checkParamNotEmpty(clientOrderId, "clientOrderId");
+        return requestWithAuthorization("/api/2/history/order", "clientOrderId=" + clientOrderId);
+    }
+
 }

@@ -58,4 +58,11 @@ public class HitbtcParserTest {
         Assertions.assertEquals("16032.55", btcusdtPrice);
     }
 
+    @Test
+    public void testParseOrderHistory() throws IOException {
+        String jsonString = "[{\"id\":337960597505,\"clientOrderId\":\"3bc31ae9200f095ced8cd1067be743cd\",\"symbol\":\"BTCUSD\",\"side\":\"buy\",\"status\":\"canceled\",\"type\":\"limit\",\"timeInForce\":\"GTC\",\"quantity\":\"0.00200\",\"price\":\"17557.62\",\"avgPrice\":\"0\",\"cumQuantity\":\"0\",\"createdAt\":\"2020-11-20T22:06:26.198Z\",\"updatedAt\":\"2020-11-20T22:06:26.273Z\"}]\n";
+        Order order = HitbtcParser.parseOrderHistory(jsonString);
+        Assertions.assertEquals("3bc31ae9200f095ced8cd1067be743cd", order.getOrderId());
+    }
+
 }
