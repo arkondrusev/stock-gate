@@ -100,6 +100,18 @@ public class OkexCommunicator extends AbstractStockCommunicator {
         return requestPostWithAuthorization("/api/spot/v3/cancel_orders" + "/" + orderId, makeCancelOrderRequestContent(symbol));
     }
 
+    public static String requestOrderFills(String symbol, String orderId) throws Exception {
+        GateUtils.checkParamNotEmpty(orderId, "orderId");
+        GateUtils.checkParamNotNull(symbol, "symbol");
+
+        return requestWithAuthorization("/api/spot/v3/fills",
+                URLParamsBuilder
+                        .newBuilder()
+                        .addParamIfNotEmpty("orderId", orderId)
+                        .addParamIfNotEmpty("instrument_id", symbol)
+                        .build());
+    }
+
     private static String makeCancelOrderRequestContent(final String symbol) throws JsonProcessingException {
         ObjectNode root = mapper.createObjectNode();
         root.put(REQUEST_PARAM_NAME_INSTRUMENT_ID, symbol);

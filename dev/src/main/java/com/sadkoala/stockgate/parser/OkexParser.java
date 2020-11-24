@@ -107,16 +107,32 @@ public class OkexParser extends AbstractStockParser {
     }
 
     private static Order parseOrder(JsonNode orderNode) {
-        return new Order("okex",
+        BigDecimal price = null;
+        String orderType = orderNode.get("type").asText();
+        if (orderType.equals("limit")) {
+            price = new BigDecimal(orderNode.get("price").asText());
+        }
+
+        Order order = new Order("okex",
                 orderNode.get("instrument_id").asText(),
                 orderNode.get("order_id").asText(),
-                new BigDecimal(orderNode.get("price").asText()),
+                price,
                 new BigDecimal(orderNode.get("size").asText()),
                 orderNode.get("status").asText(),
                 null,
                 orderNode.get("side").asText(),
                 null,
                 null);
+        JsonNode feeNode = orderNode.get("fee");
+        if (feeNode != null && !feeNode.asText().isBlank()) {
+            order.setFee(new BigDecimal(feeNode.asText()));
+        }
+        if (orderType.equals("market")) {
+            order.addOrderFill(new BigDecimal(orderNode.get("price_avg").asText()),
+                    new BigDecimal(orderNode.get("filled_size").asText()));
+        }
+
+        return order;
     }
 
 }

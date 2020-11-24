@@ -11,6 +11,7 @@ public class Order {
     private String orderId;
     private BigDecimal price; // price order was placed for
     private BigDecimal qty; //initial qty
+    private BigDecimal fee;
     private String status;
     private Long createTime;
     private String side;
@@ -77,6 +78,14 @@ public class Order {
 
     public BigDecimal getCummulativeQuoteQty() {
         return cummulativeQuoteQty;
+    }
+
+    public BigDecimal getFee() {
+        return fee;
+    }
+
+    public void setFee(BigDecimal fee) {
+        this.fee = fee;
     }
 
 }
