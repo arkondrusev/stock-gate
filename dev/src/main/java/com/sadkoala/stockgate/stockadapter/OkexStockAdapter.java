@@ -2,6 +2,7 @@ package com.sadkoala.stockgate.stockadapter;
 
 import com.sadkoala.stockgate.adapter.OkexAdapter;
 import com.sadkoala.stockgate.parser.model.Order;
+import com.sadkoala.stockgate.parser.model.Ticker;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -26,6 +27,11 @@ public class OkexStockAdapter implements IStockAdapter {
     @Override
     public String cancelOrder(String symbol, String orderId) throws Exception {
         return OkexAdapter.cancelOrder(symbol, orderId);
+    }
+
+    @Override
+    public Ticker getSymbolTicker(String symbol) throws Exception {
+        return null;
     }
 
 }
