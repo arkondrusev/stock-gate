@@ -1,6 +1,9 @@
 package com.sadkoala.stockgate.stockadapter;
 
+import com.sadkoala.stockgate.GateUtils;
 import com.sadkoala.stockgate.adapter.OkexAdapter;
+import com.sadkoala.stockgate.communicator.OkexCommunicator;
+import com.sadkoala.stockgate.parser.OkexParser;
 import com.sadkoala.stockgate.parser.model.Order;
 import com.sadkoala.stockgate.parser.model.Ticker;
 
@@ -31,7 +34,9 @@ public class OkexStockAdapter implements IStockAdapter {
 
     @Override
     public Ticker getSymbolTicker(String symbol) throws Exception {
-        return null;
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+
+        return OkexParser.parseTicker(OkexCommunicator.requestSymbolTicker(symbol));
     }
 
 }

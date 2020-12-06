@@ -48,4 +48,10 @@ public class OkexParserTest {
         System.out.println("result : " + OkexParser.parseCancelOrderResponse(jsonString));
     }
 
+    @Test
+    public void testParseTicker() throws IOException {
+        String jsonString = "{\"best_ask\":\"19103\",\"best_bid\":\"19102.9\",\"instrument_id\":\"BTC-USDT\",\"product_id\":\"BTC-USDT\",\"last\":\"19101.1\",\"last_qty\":\"0.01\",\"ask\":\"19103\",\"best_ask_size\":\"5.24520915\",\"bid\":\"19102.9\",\"best_bid_size\":\"0.00238693\",\"open_24h\":\"19090.3\",\"high_24h\":\"19350\",\"low_24h\":\"18854.4\",\"base_volume_24h\":\"12973.87557909\",\"timestamp\":\"2020-12-06T17:09:56.269Z\",\"quote_volume_24h\":\"248072260.6\"}\n";
+        System.out.println("result : " + OkexParser.parseTicker(jsonString).lastPrice);
+    }
+
 }

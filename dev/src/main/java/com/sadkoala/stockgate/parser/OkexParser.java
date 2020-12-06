@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.sadkoala.stockgate.GateUtils;
 import com.sadkoala.stockgate.parser.model.Order;
 import com.sadkoala.stockgate.parser.model.OrderbookEntry;
+import com.sadkoala.stockgate.parser.model.Ticker;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -133,6 +134,11 @@ public class OkexParser extends AbstractStockParser {
         }
 
         return order;
+    }
+
+    public static Ticker parseTicker(String jsonString) throws IOException {
+        JsonNode jsonNode = mapper.readTree(jsonString);
+        return new Ticker(jsonNode.get("instrument_id").asText(), new BigDecimal(jsonNode.get("last").asText()));
     }
 
 }

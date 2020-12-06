@@ -52,4 +52,10 @@ public class OkexCommunicatorTest {
         System.out.println(orders);
     }
 
+    @Test
+    public void testRequestSymbolTicker() throws Exception {
+        String resp = OkexCommunicator.requestSymbolTicker(BTC_USDT_SYMBOL);
+        System.out.println("resp=" + resp);
+    }
+
 }

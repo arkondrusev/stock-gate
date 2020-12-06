@@ -29,6 +29,14 @@ public class OkexCommunicator extends AbstractStockCommunicator {
 
     private static ObjectMapper mapper = new ObjectMapper();
 
+    public static String requestSymbolTicker(String symbol) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+
+        return HttpsCommunicator.executeGetRequest(buildRequestUrl(HOST,
+                "/api/spot/v3/instruments/{symbol}/ticker".replace("{symbol}", symbol),
+                null));
+    }
+
     public static String requestOpenOrders(String symbol) throws Exception {
         GateUtils.checkParamNotEmpty(symbol, "symbol");
 
