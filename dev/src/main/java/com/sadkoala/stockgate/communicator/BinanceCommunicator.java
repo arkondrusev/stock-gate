@@ -22,6 +22,7 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
 
     private static final String REQUEST_PARAM_SYMBOL = "symbol";
     public static final String REQUEST_PARAM_CLIENT_ORDER_ID = "origClientOrderId";
+    public static final String ENDPOINT_CREATE_OCO = "/api/v3/order/oco";
 
     public static String requestLatestSymbolPrice(String symbol) throws Exception {
         GateUtils.checkParamNotEmpty(symbol, "symbol");
@@ -120,6 +121,24 @@ public class BinanceCommunicator extends AbstractStockCommunicator {
         paramsBuilder.addParamIfNotEmpty("endTime", endTime);
 
         return requestGetWithAuthorization("/api/v3/myTrades", paramsBuilder.build());
+    }
+
+    public static String requestCreateOCO(String symbol, String side, BigDecimal qty, BigDecimal price, BigDecimal stopPrice) throws Exception {
+        GateUtils.checkParamNotEmpty(symbol, "symbol");
+        GateUtils.checkParamNotEmpty(side, "side");
+        GateUtils.checkParamNotNull(qty, "qty");
+        GateUtils.checkParamNotNull(price, "price");
+        GateUtils.checkParamNotNull(stopPrice, "stopPrice");
+
+        URLParamsBuilder paramsBuilder = URLParamsBuilder.newBuilder();
+        paramsBuilder.addParamIfNotEmpty("symbol", symbol);
+        paramsBuilder.addParamIfNotEmpty("side", side);
+        paramsBuilder.addParamIfNotEmpty("quantity", qty);
+        paramsBuilder.addParamIfNotEmpty("price", price);
+        paramsBuilder.addParamIfNotEmpty("stopPrice", stopPrice);
+        prepareCommonParams();
+
+        return requestPostWithAuthorization(ENDPOINT_CREATE_OCO, paramsBuilder.build());
     }
 
     private static String prepareCommonParams() {

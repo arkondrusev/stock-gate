@@ -4,6 +4,7 @@ import com.sadkoala.stockgate.GateUtils;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -37,6 +38,16 @@ public abstract class AbstractStockCommunicator {
 
             if (!GateUtils.isParamEmpty(paramValue)) {
                 addParam(paramName, paramValue);
+            }
+
+            return this;
+        }
+
+        public URLParamsBuilder addParamIfNotEmpty(String paramName, BigDecimal paramValue) {
+            GateUtils.checkParamNotEmpty(paramName, "paramName");
+
+            if (paramValue != null) {
+                addParam(paramName, paramValue.toPlainString());
             }
 
             return this;
